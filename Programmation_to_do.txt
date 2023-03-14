@@ -1,0 +1,9 @@
+Regulation_enceinte.ino
+	Ajuster les paramètres pour le PID
+	Définir le bon nombre de valeurs d'erreur à garder pour le calcul du PID (variable nb_error)
+	Tester compute_power(), v_to_temp(), set_power()
+	Écrire le corps de la fonction v_to_temp()
+	Effacer Serial.println() dans set_power()
+	Valider s'il faut ajuster la puissance en fonction du PID (linéaire, exponentiel, ...)?
+	Effacer les commentaires
+	
