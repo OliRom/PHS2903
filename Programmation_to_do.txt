@@ -7,3 +7,9 @@ Regulation_enceinte.ino
 	Valider s'il faut ajuster la puissance en fonction du PID (linéaire, exponentiel, ...)?
 	Effacer les commentaires
 	
+Procedure_etalonnage.py
+	Définir la fonction de mesure du voltage de la thermistance avec le myDAQ
+	Définir la fonction de mesure de température avec la sonde RTD
+	Changer la boucle pour qu'elle évolue dans le temps avec la RTD et le myDAQ
+	Faire fonctionner pour chaque thermistance (différentes valeurs de therm)
+	
