@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 #Conditions d'échantillonnage
 
 task = nidaqmx.Task()
-task.ai_channels.add_ai_voltage_chan(physical_channel="myDAQ1/ai0", min_val=0.000000,max_val=1.900000,units=VoltageUnits.VOLTS)
+task.ai_channels.add_ai_voltage_chan(physical_channel="myDAQ1/ai0", min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS)
 task.timing.cfg_samp_clk_timing(10, sample_mode = AcquisitionType.CONTINUOUS)
 task.start()
       #Bug potentiel dans l'appel de constants.
