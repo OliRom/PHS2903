@@ -1,5 +1,6 @@
 import serial
 import serial.tools.list_ports as list_ports
+import numpy as np
 
 
 def get_arduino_port():
@@ -19,6 +20,14 @@ def get_arduino_port():
     return ports[0][0]
 
 
-port = get_arduino_port()
-arduino = serial.Serial(port, baudrate=9600, timeout=0.2)
-arduino.close()
+def v_to_temp(v, a, b, c, e, r):
+    # Fonciton qui converti une valeur de tension en une valeur de température pour une thermistance
+    arg = r * v / (e-v)
+    denom = a + b * np.log(arg) + c * (np.log(arg))**3
+    return 1 / denom
+
+
+if __name__ == "__main__":
+    port = get_arduino_port()
+    arduino = serial.Serial(port, baudrate=9600, timeout=0.2)
+    arduino.close()
