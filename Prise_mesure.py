@@ -1,5 +1,5 @@
 import numpy as np
-import time
+import time 
 import nidaqmx
 from nidaqmx.constants import (BridgeConfiguration, VoltageUnits, 
                                BridgeUnits, AcquisitionType)
@@ -23,14 +23,68 @@ Chercher de l'info pour de la lecture en simultané de plusieurs ports analogiqu
 
 #Conditions d'échantillonnage
 
-task = nidaqmx.Task()
-task.ai_channels.add_ai_voltage_chan(physical_channel="myDAQ1/ai0", min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS)
-task.timing.cfg_samp_clk_timing(10, sample_mode = AcquisitionType.CONTINUOUS)
-task.start()
-sample = 0
-while sample <1000:
-    data = task.read()  
-    print(data)
-    sample = sample + 1
-task.stop()
-task.close()
+def analog_setup(freq = float, id_ai0 = str, id_ai1 = str, bool_ai0 = bool, bool_ai1 = bool, T_max = float):
+
+    task = nidaqmx.Task()
+    
+    if (bool_ai0 == True) and (bool_ai1 == True):
+        task.ai_channels.add_ai_voltage_chan(
+            physical_channel=id_ai0, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI0
+        task.ai_channels.add_ai_voltage_chan(
+            physical_channel=id_ai1, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI1
+    elif (bool_ai0 == True) and (bool_ai1 == False):
+        task.ai_channels.add_ai_voltage_chan(
+            physical_channel=id_ai0, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI0
+    elif (bool_ai0 == False) and (bool_ai1 == True):
+        task.ai_channels.add_ai_voltage_chan(
+            physical_channel=id_ai1, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI1
+        
+    task.timing.cfg_samp_clk_timing(freq, sample_mode = AcquisitionType.CONTINUOUS)    #Cette ligne doit être après l'init. des AI
+
+    task.start()
+
+    T = 0
+    while T < 1000:                                 # Modifier 1000 pour T_max
+        data = task.read(number_of_samples_per_channel = 1)     #Afficher data sur GUI
+        print(data, "V")
+        #convertir les tensions list en float
+
+        #Insérer équation de température en fonction de voltage provenant de l'étallonnage
+
+        T = T + 1
+
+    task.stop()
+    task.close()
+
+
+
+analog_setup(40.0, "myDAQ1/ai0", "myDAQ1/ai1", True, False, 40.0)
+
+
+
+
+
+
+
+
+
+"""task = nidaqmx.Task()
+
+    task.ai_channels.add_ai_voltage_chan(
+        physical_channel="myDAQ1/ai0", min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI0
+    task.ai_channels.add_ai_voltage_chan(
+        physical_channel="myDAQ1/ai1", min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI1
+
+    task.timing.cfg_samp_clk_timing(10, sample_mode = AcquisitionType.CONTINUOUS) #
+
+    task.start()
+
+    sample = 0
+    while sample <1000:
+        data = task.read(number_of_samples_per_channel = 1)
+        print(data, "V")
+        sample = sample + 1
+    #task.wait_until_done()
+
+    task.stop()
+    task.close()"""
