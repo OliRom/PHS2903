@@ -1,5 +1,5 @@
 import numpy as np ; import math as mt
-import time ; import tkinter ; from tkinter import *
+import time ;
 import nidaqmx
 from nidaqmx.stream_readers import AnalogSingleChannelReader, AnalogMultiChannelReader
 from nidaqmx.constants import (BridgeConfiguration, VoltageUnits, 
