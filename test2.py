@@ -1,3 +1,31 @@
+import math as mt
+print(mt.log(2.71,10.0))
+
+"""from tkinter import Tk
+
+window = Tk()
+
+def do_something():
+    print("doing something!")
+    window.after(1000, do_something)  # every 1000 milliseconds
+
+# start the do_something function immediately when the window starts
+window.after(0, do_something)
+
+window.mainloop()"""
+
+
+
+
+
+
+
+
+
+
+
+
+
 """def analog_setup(freq_0 = float, freq_1 = float, id_ai0 = str, id_ai1 = str, bool_ai0 = bool,
                   bool_ai1 = bool, T_max = float):
 
