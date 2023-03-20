@@ -1,5 +1,10 @@
-import math as mt
-print(mt.log(2.71,10.0))
+def check(x):
+    s = x + 10 
+    z = x*10
+    y = x - 10
+    return s,z,y
+
+print(check(10))
 
 """from tkinter import Tk
 
