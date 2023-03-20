@@ -24,9 +24,7 @@ Chercher de l'info pour de la lecture en simultané de plusieurs ports analogiqu
 
 ###############################################################################################################################################
 
-"""def temperature(a,b,c):
-    T = 1/(a+(b*mt.log(voltage_divider(115000.0,15.0)))
-           +(c*(mt.log(voltage_divider(115000.0,15.0)))**3))"""
+
 
 
 #0.00113,  # a
@@ -62,29 +60,29 @@ def analog_setup(freq = float, id_ai0 = str, id_ai1 = str, bool_ai0 = bool, bool
     #data = np.ndarray([2,])  [read alternatif]
     task.start()
 
-    T = 0
-    while T < 1000:                                 # Modifier 1000 pour T_max
+    V1 = 0
+    while V1 < 2.0:                                 # V1 est la tension de la thermistance la plus froide
         data = task.read(number_of_samples_per_channel = 1)
 
         #a) reader.read_one_sample(data)  [read alternatif]
         #b) Afficher data sur GUI
 
-        #convertir les tensions list en float
+        #convertir les tensions list en float pour affichage
         if cas1 == True:
             V0 = data[0][0]
             V1 = data[1][0]
             print(V0,"v   ",V1,"v")
-            #return V0, V1
+            return V0, V1
            
         elif cas2 == True:
             V0 = data[0]
             print(V0,"V")
-            #return V0
+            return V0
+        
         elif cas3 == True:
             V1 = data[0]
             print(V1,"V")
-            #return V1
-        #Insérer équation de température en fonction de voltage provenant de l'étallonnage
+            return V1
         T = T + 1
 
     task.stop()
