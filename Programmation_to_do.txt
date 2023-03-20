@@ -12,4 +12,10 @@ Procedure_etalonnage.py
 	Définir la fonction de mesure de température avec la sonde RTD
 	Changer la boucle pour qu'elle évolue dans le temps avec la RTD et le myDAQ
 	Faire fonctionner pour chaque thermistance (différentes valeurs de therm)
-	
+
+Utils.py
+    Écrire le corps de la fonction measure_v()
+    Écrire le corps de la classe PowerControler()
+
+Parameters.py
+    Ajuster les numéros des ports du myDAQ (daq_ports)

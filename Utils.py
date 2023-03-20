@@ -27,6 +27,22 @@ def v_to_temp(v, a, b, c, e, r):
     return 1 / denom
 
 
+def measure_v(port):
+    # Fonction qui va lire la tension sur un port du myDAQ
+    mesure = 0
+    return mesure
+
+
+class PowerControler:
+    def __init__(self, port, p=0):
+        self.port = port  # Port de l'élément chauffant
+        self.power = p
+
+    def set_power(self, p):
+        # Méthode pour fixer la valeur de la puissance à fourir
+        pass
+
+
 if __name__ == "__main__":
     port = get_arduino_port()
     arduino = serial.Serial(port, baudrate=9600, timeout=0.2)

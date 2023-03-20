@@ -1,88 +1,60 @@
-import numpy as np ; import math as mt
-import time ;
-import nidaqmx
-from nidaqmx.stream_readers import AnalogSingleChannelReader, AnalogMultiChannelReader
-from nidaqmx.constants import (BridgeConfiguration, VoltageUnits,
-                               BridgeUnits, AcquisitionType)
+import time
+import Utils as ut
+import serial
+import numpy as np
+import pandas as pd
+# import nidaqmx
+# from nidaqmx.stream_readers import AnalogSingleChannelReader, AnalogMultiChannelReader
+# from nidaqmx.constants import (BridgeConfiguration, VoltageUnits,
+#                                BridgeUnits, AcquisitionType)
 import Parameters as para
-###############################################################################################################################################
 
 
+def measure_ga():
+    start = time.time_ns()  # Starting time
+    T = 0  # Initialisation de la tempérautre (valeur peu importante)
+    data = list()  # Initialisation de la liste contenant les données
 
-###############################################################################################################################################
-#CONSTANTE
-Tmax = 40
+    # Initialisation du contrôleur de puissance
+    power_controler = ut.PowerControler(para.daq_ports["power"])
+    power_controler.set_power(15)
 
-#PROGRAMME PRINCIPAL
-def main():
-    #Note le temps de départ dans la variable temps_debut#
-    temps_debut = time.time_ns()
+    # Initialisation de la communication sérielle avec le Arduino
+    arduino = serial.Serial(ut.get_arduino_port(), baudrate=9600, timeout=0.2)
 
-    #TODO mesurer la température initiale
-    Température = 0
+    # Charger les coefficients des thermistances
+    coef = dict()
+    for i in [1, 2]:
+        coef[f"thermi_{i}"] = np.load(para.coef_file_paths[f"thermi_{i}"])["coef"]
 
-    #On fixe la puissance fournie à l'élément chauffant
-    'set_power(puissance)'
+    while T <= para.T_max:
+        V1, V2 = ut.measure_v(para.daq_ports["thermi_1"]), ut.measure_v(para.daq_ports["thermi_2"])
+        T1, T2 = ut.v_to_temp(V1, *coef["thermi_1"]), ut.v_to_temp(V2, *coef["thermi_2"])
+        t = time.time_ns() - start
 
-    while Temperature <= Tmax:
+        T = (T1+T2)/2
+        P = power_controler.power
 
-        #Mesurer tension des thermistances
-        'V1,V2 = mesurer_V(port1), mesurer_V(port2)'
+        data.append((t, T1, T2, T, P))
 
-        #Convertir tension en température
-        'T1, T2 = v_to_temp(V1,a,b,c),v_to_temp(V2,a,b,c)'
+        # Envoyer la température moyenne au Arduino
+        arduino.write(bytes(T, "utf-8"))
 
-        #Prendre en note la valeur du temps lors de la mesure
-        temps = time.time_ns() - temps_debut
-
-        #Mesure de la température moyenne
-        'Tmoyen = (T1+T2)/2'
-
-        #Mesurer la tension de l'élément chauffant
-        'Vp = mesurer_V(port3)'
-
-        #Calculer la puissance fournie
-        'P = V_to_power(Vp,R)'
-
-        #Ajoute les valeurs à notre liste de données
-        'data.append(temps,T1,T2,Tmoyen,P)'
-
-        #Envoyer la température moyenne au Arduino
-        'send(Tmoyen)'
-
-        #On attend 0.1 secondes entre chaque mesure
         time.sleep(0.1)
 
-    #Calculer l'enthalpie de fusion avec toutes les température moyenne et la puissance
+    # Enregistrement des données
+    df = pd.DataFrame(data, columns=["t", "T1", "T2", "T", "P"])
+    df.to_csv(para.meas_file_paths["data"])
+
+    # Calculer l'enthalpie de fusion avec toutes les température moyenne et la puissance
     'enthalpie = Calculer_enthalpie(Tmoyen,P,t)'
 
-    #Calculer la capacité thermique
+    # Calculer la capacité thermique
     'capacité = Calculer_capacité(Tmoyen,P,t)'
 
-    #Enregistrer les données
-    'Enregistrer(data)'
-
-    #Afficher la courbe de température en fonction du temps
+    # Afficher la courbe de température en fonction du temps
     'plot_data()'
 
-#Todo FONCTION QUI RETOURNE LA VALEUR DE VOLTAGE AU PORT SELECTIONNÉ
-def mesurer_V(Port):
 
-    voltage = 0
-
-    return voltage
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if __name__ == "__main__":
+    measure_ga()
