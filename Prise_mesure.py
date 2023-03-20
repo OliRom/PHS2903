@@ -90,14 +90,14 @@ def analog_setup(freq = float, id_ai0 = str, id_ai1 = str, bool_ai0 = bool, bool
     task.stop()
     task.close()
     
-"""def voltage_divider(R1 = float, VS = float):
+def voltage_divider(R1 = float, VS = float):
     RT = R1*(1/((VS/analog_setup(10.0, "myDAQ1/ai0", "myDAQ1/ai1", True, True, 40.0))-1.0))
     return RT
 
 def temperature(a,b,c):
     T = 1/(a+(b*mt.log(voltage_divider(115000.0,15.0)))+(c*(mt.log(voltage_divider(115000.0,15.0)))**3))
 
-temperature(*para.coef_init_guess[:3])"""
+temperature(*para.coef_init_guess[:3])
 
 
 
