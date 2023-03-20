@@ -30,21 +30,21 @@ def analog_setup(freq = float, id_ai0 = str, id_ai1 = str, bool_ai0 = bool, bool
     
     # Ouverture/fermeture des deux ports analogiques
 
-    cas1 = None ; cas2 = None ; cas3 = None
-    if (bool_ai0 == True) and (bool_ai1 == True):
-        task.ai_channels.add_ai_voltage_chan(
-            physical_channel=id_ai0, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI0
-        task.ai_channels.add_ai_voltage_chan(
-            physical_channel=id_ai1, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI1
-        cas1 = True
-    elif (bool_ai0 == True) and (bool_ai1 == False):
-        task.ai_channels.add_ai_voltage_chan(
-            physical_channel=id_ai0, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI0
-        cas2 = True
-    elif (bool_ai0 == False) and (bool_ai1 == True):
-        task.ai_channels.add_ai_voltage_chan(
-            physical_channel=id_ai1, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI1
-        cas3 = True
+   # cas1 = None ; cas2 = None ; cas3 = None
+    #if (bool_ai0 == True) and (bool_ai1 == True):
+    task.ai_channels.add_ai_voltage_chan(
+        physical_channel=id_ai0, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI0
+    task.ai_channels.add_ai_voltage_chan(
+        physical_channel=id_ai1, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI1
+    cas1 = True
+    #elif (bool_ai0 == True) and (bool_ai1 == False):
+    #    task.ai_channels.add_ai_voltage_chan(
+      #      physical_channel=id_ai0, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI0
+     #   cas2 = True
+   # elif (bool_ai0 == False) and (bool_ai1 == True):
+   #     task.ai_channels.add_ai_voltage_chan(
+       #     physical_channel=id_ai1, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI1
+     #   cas3 = True
         
     task.timing.cfg_samp_clk_timing(freq, sample_mode = AcquisitionType.CONTINUOUS)    #Cette ligne doit être après l'init. des AI
     
@@ -60,22 +60,22 @@ def analog_setup(freq = float, id_ai0 = str, id_ai1 = str, bool_ai0 = bool, bool
         #b) Afficher data sur GUI
 
         #convertir les tensions list en float pour affichage
-        if cas1 == True:
-            V0 = data[0][0]
-            V1 = data[1][0]
+       # if cas1 == True:
+        V0 = data[0][0]
+        V1 = data[1][0]
             #print(V0,"v   ",V1,"v")
-            return V0, V1
+        return V0, V1
            
-        elif cas2 == True:
-            V0 = data[0]
+        #elif cas2 == True:
+          #  V0 = data[0]
            # print(V0,"V")
-            return V0
+        #    return V0
         
-        elif cas3 == True:
-            V1 = data[0]
+       # elif cas3 == True:
+        #    V1 = data[0]
             #print(V1,"V")
-            return V1
-        T = T + 1
+           # return V1
+       # T = T + 1
 
     task.stop()
     task.close()
