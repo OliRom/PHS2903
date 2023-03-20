@@ -55,7 +55,6 @@ def analog_setup(freq = float, id_ai0 = str, id_ai1 = str, bool_ai0 = bool, bool
     V1 = 0
     while V1 < 2.0:                                 # V1 est la tension de la thermistance la plus froide
         data = task.read(number_of_samples_per_channel = 1)
-
         #a) reader.read_one_sample(data)  [read alternatif]
         #b) Afficher data sur GUI
 
