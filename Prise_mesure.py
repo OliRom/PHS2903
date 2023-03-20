@@ -33,13 +33,30 @@ def GET_V(freq = float, channel_list = list, nb_samples = bool, task = nidaqmx.T
     Entrer l'argument True si on veux un nombre
       spécifique d'échantillons pour les ports sélectionnés"""
     
+    # init. AI channels
+
     for channel in channel_list:
         task.ai_channels.add_ai_voltage_chan(
-            physical_channel=channel, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) #init. AI channels
-   
+            physical_channel=channel, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) 
+        
+    # Initialisation lecture DAQ
+
     task.timing.cfg_samp_clk_timing(freq, sample_mode = AcquisitionType.CONTINUOUS)
+    task.start()
+    data = task.read(number_of_samples_per_channel = 1)
+   
+    # Affichage du nombre d'échantillons fini
 
     if nb_samples == True:
         nb = 1
         nb_ask = input("ENTRER LE NOMBRE D'ÉCHANTILLON(S) :   ") ; nb_ask = int(nb_ask)
         while nb <= nb_ask:
+            nb = nb + 1
+            V0 = data[0][0] ; V1 = data[1][0]
+            print(V0,"v   ",V1,"v")
+    
+    # Affichage et enregistrement des échantillions pour la fonction principale
+    
+    else:
+
+         
