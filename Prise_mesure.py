@@ -45,18 +45,26 @@ def GET_V(freq = float, channel_list = list, nb_samples = bool, task = nidaqmx.T
     task.start()
     data = task.read(number_of_samples_per_channel = 1)
    
-    # Affichage du nombre d'échantillons fini
+    # Affichage du nombre d'échantillons de tension fini
+
+    V0 = data[0][0] ; V1 = data[1][0]
 
     if nb_samples == True:
         nb = 1
         nb_ask = input("ENTRER LE NOMBRE D'ÉCHANTILLON(S) :   ") ; nb_ask = int(nb_ask)
         while nb <= nb_ask:
             nb = nb + 1
-            V0 = data[0][0] ; V1 = data[1][0]
             print(V0,"v   ",V1,"v")
     
-    # Affichage et enregistrement des échantillions pour la fonction principale
+    # Affichage et enregistrement des échantillions de tensions continus pour la fonction principale
     
     else:
+        V_ref = 0.0
+        while V_ref < 2.0:                                             
+            V_ref = V1
+            print(V0,"v   ",V1,"v")
+    
+    # Retourner les tensions sous forme de float
 
+    return V0,V1
          
