@@ -55,7 +55,7 @@ def GET_V(freq, channel_list, nb_samples):
             data = task.read(number_of_samples_per_channel = 1)
             V0 = data[0][0] ; V1 = data[1][0]
             nb = nb + 1
-            print(V0,"v   ",V1,"v")
+            print(f'Hot : {V0},   Cold : {V1}')
         
         task.stop()
     
@@ -67,9 +67,8 @@ def GET_V(freq, channel_list, nb_samples):
             data = task.read(number_of_samples_per_channel = 1)                                          
             V0 = data[0][0] ; V1 = data[1][0]
             V_ref = V1
-            print(V0,"v   ",V1,"v")
-            #return V0,V1
-        
+            print(f'Hot : {V0},   Cold : {V1}')
+            
         task.stop()
     
 
