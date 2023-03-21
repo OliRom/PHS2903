@@ -41,10 +41,9 @@ def GET_V(freq, channel_list, nb_samples):
         task.ai_channels.add_ai_voltage_chan(
             physical_channel=channel, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS) 
         
-    # Initialisation lecture DAQ
+    # Spécification lecture DAQ
     
     task.timing.cfg_samp_clk_timing(freq, sample_mode = AcquisitionType.CONTINUOUS)
-    task.start()
    
     # Affichage du nombre d'échantillons de tension fini
 
@@ -52,6 +51,7 @@ def GET_V(freq, channel_list, nb_samples):
         nb = 1
         nb_ask = input("ENTRER LE NOMBRE D'ÉCHANTILLON(S) :   ") ; nb_ask = int(nb_ask)
         while nb <= nb_ask:
+            task.start()
             data = task.read(number_of_samples_per_channel = 1)
             V0 = data[0][0] ; V1 = data[1][0]
             nb = nb + 1
@@ -64,6 +64,7 @@ def GET_V(freq, channel_list, nb_samples):
     else:
         V_ref = 0.0
         while V_ref < 2.0:
+            task.start()
             data = task.read(number_of_samples_per_channel = 1)                                          
             V0 = data[0][0] ; V1 = data[1][0]
             V_ref = V1
