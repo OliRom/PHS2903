@@ -45,30 +45,32 @@ def GET_V(freq, channel_list, nb_samples):
     
     task.timing.cfg_samp_clk_timing(freq, sample_mode = AcquisitionType.CONTINUOUS)
     task.start()
-    data = task.read(number_of_samples_per_channel = 1)
    
     # Affichage du nombre d'échantillons de tension fini
-
-    
 
     if nb_samples == True:
         nb = 1
         nb_ask = input("ENTRER LE NOMBRE D'ÉCHANTILLON(S) :   ") ; nb_ask = int(nb_ask)
         while nb <= nb_ask:
+            data = task.read(number_of_samples_per_channel = 1)
             V0 = data[0][0] ; V1 = data[1][0]
             nb = nb + 1
             print(V0,"v   ",V1,"v")
+        
+        task.stop()
     
     # Affichage et enregistrement des échantillions de tensions continus pour la fonction principale
     
     else:
         V_ref = 0.0
-        while V_ref < 2.0:                                             
+        while V_ref < 2.0:
+            data = task.read(number_of_samples_per_channel = 1)                                          
             V0 = data[0][0] ; V1 = data[1][0]
             V_ref = V1
             print(V0,"v   ",V1,"v")
             #return V0,V1
-    
+        
+        task.stop()
     
 
 
