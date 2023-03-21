@@ -25,7 +25,7 @@ Chercher de l'info pour de la lecture en simultané de plusieurs ports analogiqu
 ###############################################################################################################################################
 
 
-def GET_V(freq, channel_list, nb_samples):     
+def GET_V(freq = float, channel_list = list, nb_samples = bool):     
     
     """Insérer une list de str des ports AI
     qu'on veut utiliser  ex: ["myDAQ1/ai0", "myDAQ1/ai1"]
