@@ -26,7 +26,7 @@ def get_arduino_port():
 
 
 def v_to_temp(v, a, b, c, e, r):
-    # Fonciton qui converti une valeur de tension en une valeur de température pour une thermistance
+    '''Fonction qui converti une valeur de tension en une valeur de température pour une thermistance'''
     arg = r * v / (e-v)
     denom = a + b * np.log(arg) + c * (np.log(arg))**3
     return 1 / denom
@@ -80,7 +80,7 @@ class PowerControler:
         pass
     def p_to_voltage(self, p):
         #v = fonction
-
+        return v
 
 if __name__ == "__main__":
     port = get_arduino_port()
