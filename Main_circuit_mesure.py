@@ -12,7 +12,7 @@ import Parameters as para
 
 def measure_ga():
     start = time.time_ns()  # Starting time
-    T = 0  # Initialisation de la tempérautre (valeur peu importante)
+    tmoyen = 0  # Initialisation de la tempérautre (valeur peu importante)
     data = list()  # Initialisation de la liste contenant les données
 
     # Initialisation du contrôleur de puissance
@@ -27,23 +27,23 @@ def measure_ga():
     for i in [1, 2]:
         coef[f"thermi_{i}"] = np.load(para.coef_file_paths[f"thermi_{i}"])["coef"]
 
-    while T <= para.T_max:
+    while tmoyen <= para.T_max:
         v1, v2 = ut.mesure_voltage(para.daq_ports["thermi_1"]), ut.measure_v(para.daq_ports["thermi_2"])
-        T1, T2 = ut.v_to_temp(V1, *coef["thermi_1"]), ut.v_to_temp(V2, *coef["thermi_2"])
-        t = time.time_ns() - start
+        t1, t2 = ut.v_to_temp(v1, *coef["thermi_1"]), ut.v_to_temp(v2, *coef["thermi_2"])
+        temps = time.time_ns() - start
 
-        T = (T1+T2)/2
-        P = power_controler.power
+        tmoyen = (t1+t2)/2
+        p = power_controler.power
 
-        data.append((t, T1, T2, T, P))
+        data.append((temps, t1, t2, tmoyen, p))
 
         # Envoyer la température moyenne au Arduino
-        arduino.write(bytes(T, "utf-8"))
+        arduino.write(bytes(tmoyen, "utf-8"))
 
         time.sleep(0.1)
 
     # Enregistrement des données
-    df = pd.DataFrame(data, columns=["t", "T1", "T2", "T", "P"])
+    df = pd.DataFrame(data, columns=["temps", "t1", "t2", "tmoyen", "p"])
     df.to_csv(para.meas_file_paths["data"])
 
     # Calculer l'enthalpie de fusion avec toutes les température moyenne et la puissance
