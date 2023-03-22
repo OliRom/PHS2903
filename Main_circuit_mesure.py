@@ -28,7 +28,7 @@ def measure_ga():
         coef[f"thermi_{i}"] = np.load(para.coef_file_paths[f"thermi_{i}"])["coef"]
 
     while T <= para.T_max:
-        V1, V2 = ut.measure_v(para.daq_ports["thermi_1"]), ut.measure_v(para.daq_ports["thermi_2"])
+        v1, v2 = ut.mesure_voltage(para.daq_ports["thermi_1"]), ut.measure_v(para.daq_ports["thermi_2"])
         T1, T2 = ut.v_to_temp(V1, *coef["thermi_1"]), ut.v_to_temp(V2, *coef["thermi_2"])
         t = time.time_ns() - start
 

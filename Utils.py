@@ -1,6 +1,11 @@
 import serial
 import serial.tools.list_ports as list_ports
-import numpy as np
+import numpy as np ; import math as mt
+import time ; import nidaqmx
+from nidaqmx.stream_readers import AnalogSingleChannelReader, AnalogMultiChannelReader
+from nidaqmx.constants import (ResolutionType, VoltageUnits, BridgeUnits, AcquisitionType)
+import Parameters as para
+
 
 
 def get_arduino_port():
@@ -27,10 +32,34 @@ def v_to_temp(v, a, b, c, e, r):
     return 1 / denom
 
 
-def measure_v(port):
-    # Fonction qui va lire la tension sur un port du myDAQ
-    mesure = 0
-    return mesure
+def mesure_voltage(port):
+    '''Fonction qui permet de faire une lecture de voltage à une certaine fréquence sur le ports sélectionné '''
+
+    task = nidaqmx.Task() # Coucou, wake-up
+    task.ai_channels.add_ai_voltage_chan(
+        physical_channel=port, min_val=0.0, max_val=2.0, units=VoltageUnits.VOLTS)  # initialise port
+    task.timing.cfg_samp_clk_timing(sample_mode=AcquisitionType.FINITE)  # Spécification lecture MydaQ
+    task.start()  # Commence à m'écouter
+    v = task.read(number_of_samples_per_channel = 1)[0] # lit le port
+    task.stop()#Ne m'écoute plus
+    task.close() #Retourne dodo
+    return v
+
+def mesure_resistance(r1, vs, channel_list):
+    '''Fonction qui permet de retourner la valeur de résistance d'une thermistance'''
+    v0, v1 =  mesure_voltage(channel_list[0]), mesure_voltage(channel_list[1])
+    rt0 = r1*(1/((vs/v0)-1.0))
+    rt1 = r1*(1/((vs/v1)-1.0))
+    return rt0,rt1
+
+
+def mesure_température(a,b,c, channel_list, freq):
+
+    RT0,RT1 = mesure_resistance(115000.0,15.0, channel_list)
+    T0 = 1/(a+(b*mt.log(RT0)) + (c*(mt.log(RT0))**3))
+    T1 = 1/(a+(b*mt.log(RT1)) + (c*(mt.log(RT1))**3))
+    print(f'Hot : {T0} °K,   Cold : {T1} °K')
+
 
 
 class PowerControler:

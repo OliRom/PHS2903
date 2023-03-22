@@ -27,70 +27,25 @@ Chercher de l'info pour de la lecture en simultané de plusieurs ports analogiqu
 
 
 def GET_V(port,freq):
-    
-    """Insérer une list de str des ports AI
-    qu'on veut utiliser  ex: ["myDAQ1/ai0", "myDAQ1/ai1"]
-    
-    Entrer l'argument True si on veux un nombre
-      spécifique d'échantillons pour les ports sélectionnés"""
+    '''Fonction qui permet de faire une lecture de voltage à une certaine fréquence sur le ports sélectionné '''
 
-    
     task = nidaqmx.Task() # Coucou, wake-up
     task.ai_channels.add_ai_voltage_chan(
         physical_channel=port, min_val=0.0, max_val=2.0, units=VoltageUnits.VOLTS)  # initialise port
     task.timing.cfg_samp_clk_timing(freq, sample_mode=AcquisitionType.CONTINUOUS)  # Spécification lecture MydaQ
     task.start()  # Commence à m'écouter
     v = task.read(number_of_samples_per_channel = 1)[0] # lit le port
-
-    task.stop()
-    task.close()
-
+    task.stop()#Ne m'écoute plus
+    task.close() #Retourne dodo
     return v
 
-    #for channel in channel_list:
-    #    task.ai_channels.add_ai_voltage_chan(
-    #        physical_channel=channel, min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS)
-    #        #"myDAQ1/ai{}".format(channel), min_val=0.0,max_val=2.0,units=VoltageUnits.VOLTS)
-    #        # version alternative avec [0,1]
-#
-    #
-    ## Spécification lecture DAQ
-    #
-    #task.timing.cfg_samp_clk_timing(freq, sample_mode = AcquisitionType.CONTINUOUS)
-    #task.start()
-#
-    # Affichage du nombre d'échantillons de tension fini
-    
-    #if sample_request == True:
-    #    nb = 0
-    #    nb_ask = input("ENTRER LE NOMBRE D'ÉCHANTILLON(S) :   ") ; nb_ask = int(nb_ask)
-    #    while nb <= nb_ask:
-    #        data = task.read(number_of_samples_per_channel = 1)
-    #        V0 = data[0][0] ; V1 = data[1][0]
-    #        nb = nb + 1
-    #        print(f'Hot : {V0},   Cold : {V1}')
-    #        return V0, V1
-    #
-    ## Affichage et enregistrement des échantillions de tensions continus pour la fonction principale
-    #
-    #else:
-    #    V_ref = 0.0
-    #    while V_ref < 2.0:
-    #        data = task.read(number_of_samples_per_channel = 1)
-    #        V0 = data[0][0] ; V1 = data[1][0]
-    #        V_ref = V1
-    #        print(f'Hot : {V0} V,   Cold : {V1} V')
-    #        return V0, V1
-
-    
 def GET_R(r1, vs, channel_list, freq):
-
+    '''Fonction qui permet de retourner la valeur de résistance d'une thermistance'''
     v0, v1 =  GET_V(channel_list[0], freq), GET_V(channel_list[1], freq)
     rt0 = r1*(1/((vs/v0)-1.0))
     rt1 = r1*(1/((vs/v1)-1.0))
     return rt0,rt1
 
-# Fonction pour trouver la température
 
 def GET_T(a,b,c, channel_list, freq):
 
@@ -101,7 +56,3 @@ def GET_T(a,b,c, channel_list, freq):
 
 # Test
 GET_T(*para.coef_init_guess[:3], ["myDAQ1/ai0", "myDAQ1/ai1"], 10.0)
-#GET_V(["myDAQ1/ai0", "myDAQ1/ai1"], False, 10.0)
-#GET_R(115000.0, 15.0, ["myDAQ1/ai0", "myDAQ1/ai1"], False, 10.0)
-
-# Bug à régler : Comment utiliser autre chose qu'un return car ça brise la boucle
