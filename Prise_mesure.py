@@ -36,12 +36,10 @@ def GET_V(port,freq):
 
     
     task = nidaqmx.Task() # Coucou, wake-up
-
-    task.timing.cfg_samp_clk_timing(freq, sample_mode = AcquisitionType.CONTINUOUS) #Spécification lecture MydaQ
-    task.start() #Commence à m'écouter
-
     task.ai_channels.add_ai_voltage_chan(
         physical_channel=port, min_val=0.0, max_val=2.0, units=VoltageUnits.VOLTS)  # initialise port
+    task.timing.cfg_samp_clk_timing(freq, sample_mode=AcquisitionType.CONTINUOUS)  # Spécification lecture MydaQ
+    task.start()  # Commence à m'écouter
     v = task.read(number_of_samples_per_channel = 1)[0] # lit le port
 
     task.stop()
