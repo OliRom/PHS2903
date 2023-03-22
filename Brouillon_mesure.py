@@ -1,4 +1,39 @@
-def analog_setup(freq = float, id_ai0 = str, id_ai1 = str, bool_ai0 = bool, bool_ai1 = bool, T_max = float):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""def analog_setup(freq = float, id_ai0 = str, id_ai1 = str, bool_ai0 = bool, bool_ai1 = bool, T_max = float):
     
     task = nidaqmx.Task()
     
@@ -53,7 +88,7 @@ def analog_setup(freq = float, id_ai0 = str, id_ai1 = str, bool_ai0 = bool, bool
     task.stop()
     task.close()
     
-"""def voltage_divider(R1 = float, VS = float):
+def voltage_divider(R1 = float, VS = float):
     V0, V1 =  analog_setup(10.0, "myDAQ1/ai0", "myDAQ1/ai1", True, True, 40.0)
     RT0 = R1*(1/((VS/V0)-1.0))
     RT1 = R1*(1/((VS/V1)-1.0))
