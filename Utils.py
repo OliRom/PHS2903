@@ -31,6 +31,11 @@ def v_to_temp(v, a, b, c, e, r):
     denom = a + b * np.log(arg) + c * (np.log(arg))**3
     return 1 / denom
 
+def set_voltage(port,voltage):
+    '''Fonction qui permet de définir le output de tension sur un des ports analogiques out '''
+    task = nidaqmx.Task()
+    task.ao_channels.add_ao_voltage_chan(port,min_val=0,max_val=10.0) # Ajouter le canal analogique
+    task.write(voltage)  # Écrire une tension sur le port
 
 def mesure_voltage(port):
     '''Fonction qui permet de faire une lecture de voltage à une certaine fréquence sur le ports sélectionné '''
@@ -68,8 +73,13 @@ class PowerControler:
         self.power = p
 
     def set_power(self, p):
-        # Méthode pour fixer la valeur de la puissance à fourir
+        voltage = self.p_to_voltage(p)
+        task = nidaqmx.Task()
+        task.ao_channels.add_ao_voltage_chan(self.port, min_val=0, max_val=10.0)  # Ajouter le canal analogique
+        task.write(voltage)  # Écrire une tension sur le port
         pass
+    def p_to_voltage(self, p):
+        #v = fonction
 
 
 if __name__ == "__main__":
