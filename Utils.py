@@ -1,11 +1,12 @@
 import serial
 import serial.tools.list_ports as list_ports
-import numpy as np ; import math as mt
-import time ; import nidaqmx
+import numpy as np
+import math as mt
+import time
+import nidaqmx
 from nidaqmx.stream_readers import AnalogSingleChannelReader, AnalogMultiChannelReader
 from nidaqmx.constants import (ResolutionType, VoltageUnits, BridgeUnits, AcquisitionType)
 import Parameters as para
-
 
 
 def get_arduino_port():
@@ -31,13 +32,15 @@ def v_to_temp(v, a, b, c, e, r):
     denom = a + b * np.log(arg) + c * (np.log(arg))**3
     return 1 / denom
 
+
 def set_voltage(port,voltage):
     '''Fonction qui permet de définir le output de tension sur un des ports analogiques out '''
     task = nidaqmx.Task()
     task.ao_channels.add_ao_voltage_chan(port,min_val=0,max_val=10.0) # Ajouter le canal analogique
     task.write(voltage)  # Écrire une tension sur le port
 
-def mesure_voltage(port):
+
+def mesure_v(port):
     '''Fonction qui permet de faire une lecture de voltage à une certaine fréquence sur le ports sélectionné '''
 
     task = nidaqmx.Task() # Coucou, wake-up
@@ -50,21 +53,20 @@ def mesure_voltage(port):
     task.close() #Retourne dodo
     return v
 
+
 def mesure_resistance(r1, vs, channel_list):
     '''Fonction qui permet de retourner la valeur de résistance d'une thermistance'''
-    v0, v1 =  mesure_voltage(channel_list[0]), mesure_voltage(channel_list[1])
+    v0, v1 = mesure_v(channel_list[0]), mesure_v(channel_list[1])
     rt0 = r1*(1/((vs/v0)-1.0))
     rt1 = r1*(1/((vs/v1)-1.0))
     return rt0,rt1
 
 
-def mesure_température(a,b,c, channel_list, freq):
-
-    RT0,RT1 = mesure_resistance(115000.0,15.0, channel_list)
+def mesure_temperature(a,b,c, channel_list, freq):
+    RT0, RT1 = mesure_resistance(115000.0,15.0, channel_list)
     T0 = 1/(a+(b*mt.log(RT0)) + (c*(mt.log(RT0))**3))
     T1 = 1/(a+(b*mt.log(RT1)) + (c*(mt.log(RT1))**3))
     print(f'Hot : {T0} °K,   Cold : {T1} °K')
-
 
 
 class PowerControler:
@@ -73,14 +75,17 @@ class PowerControler:
         self.power = p
 
     def set_power(self, p):
+        self.power = p
         voltage = self.p_to_voltage(p)
-        task = nidaqmx.Task()
-        task.ao_channels.add_ao_voltage_chan(self.port, min_val=0, max_val=10.0)  # Ajouter le canal analogique
-        task.write(voltage)  # Écrire une tension sur le port
-        pass
-    def p_to_voltage(self, p):
-        #v = fonction
+        with nidaqmx.Task() as task:
+            task.ao_channels.add_ao_voltage_chan(self.port, min_val=0, max_val=10.0)  # Ajouter le canal analogique
+            task.write(voltage)  # Écrire une tension sur le port
+
+    @staticmethod
+    def p_to_voltage(p):
+        v = 0
         return v
+
 
 if __name__ == "__main__":
     port = get_arduino_port()

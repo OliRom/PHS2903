@@ -2,6 +2,8 @@ import time
 import serial
 import serial.tools.list_ports as list_ports
 import random
+import nidaqmx as ni
+from nidaqmx import stream_writers
 
 
 def get_arduino_port():
@@ -29,9 +31,25 @@ def send_message(connection, message):
     print("Recived:", recived)
 
 
-port = get_arduino_port()
-arduino = serial.Serial(port, baudrate=9600, timeout=0.2)
+if __name__ == "__main__":
+    # port = get_arduino_port()
+    # arduino = serial.Serial(port, baudrate=9600, timeout=0.2)
+    #
+    # while True:
+    #     send_message(arduino, str(random.randint(0, 10)))
+    #     time.sleep(1)
 
-while True:
-    send_message(arduino, str(random.randint(0, 10)))
-    time.sleep(1)
+    with ni.Task() as task:
+        task.ai_channels.add_ai_voltage_chan("mydaq1/ai0")
+        a = task.read()
+        print(a)
+
+    task = ni.Task()
+    # task.ao_channels.add_ao_voltage_chan(task.out_stream)
+    # task.close()
+
+    a = stream_writers.CounterWriter("mudaq1/ao0")
+    a.write_one_sample_pulse_frequency(10, 0.2)
+    task.close()
+
+    time.sleep(20)
