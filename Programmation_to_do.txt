@@ -19,3 +19,9 @@ Utils.py
 
 Parameters.py
     Ajuster les numéros des ports du myDAQ (daq_ports)
+    Entrer la valeur exacte de la masse du gallium (m_Ga)
+    Entrer la valeur exacte de la capacité thermique du récipient (c_recipient)
+
+Calul_resultats.py
+    Tester toutes les fonctions
+    Ajouter les fonctions qui vont calculer l'incertitude sur les mesures
