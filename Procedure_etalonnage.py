@@ -3,24 +3,27 @@ import pandas as pd
 import numpy as np
 import Parameters as param
 
-therm=1
+i= int(input('Numero de la thermistance (1 ou 2): '))
+courbe = []
 
-def V(x): #tension de thermistance sur myDAQ
-    return x
+while True:
+    T=input('Q: quitter D: supprimer R: relecture. float: Température RTD.  ')
+    if T=='Q' or T=='q':
+        break
+    elif T=='D' or T=='d':
+        courbe.pop(-1)
+    elif T=='R' or T=='r':
+        print(courbe[-3:])
+    else:
+        try:
+            float(T)
+        except:
+            print('Mauvaise valeur')
+        else:
+            V=ut.mesure_v(para.daq_ports[f"thermi_{i}"])
+            courbe.append((V,T))
 
-def T(x): #temperature selon RTD
-    return x
-
-
-list = []
-print(list)
-
-tuple=(1,2)
-
-for i in range(10):
-    list.append((V(i),T(i)))
-
-df = pd.DataFrame(list, columns=["V","T"])
+df = pd.DataFrame(courbe, columns=["V","T"])
 print(df)
 
-df.to_csv(param.etal_data_file_paths[therm])
+df.to_csv(param.etal_data_file_paths[f'thermi_{i}'])
