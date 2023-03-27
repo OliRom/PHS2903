@@ -27,23 +27,42 @@ def get_arduino_port():
 
 
 def v_to_temp(v, a, b, c, e, r):
-    '''Fonction qui converti une valeur de tension en une valeur de température pour une thermistance'''
+    """
+    Fonction qui convertit le voltage en température.
+
+    :param v: voltage à convertir
+    :param a,b,c,e,r:
+    :return : température en float
+
+    """
     arg = r * v / (e-v)
     denom = a + b * np.log(arg) + c * (np.log(arg))**3
     return 1 / denom
 
 
 def set_voltage(port,voltage):
-    '''Fonction qui permet de définir le output de tension sur un des ports analogiques out '''
+    """
+    Fonction qui définit le voltage en sortie des analogue out du myDaq.
+
+    :param port: port ao0 ou ao1
+    :param voltage: valeur du voltage voulue
+
+    """
     task = nidaqmx.Task()
     task.ao_channels.add_ao_voltage_chan(port,min_val=0,max_val=10.0) # Ajouter le canal analogique
     task.write(voltage)  # Écrire une tension sur le port
 
 
 def mesure_v(port):
-    '''Fonction qui permet de faire une lecture de voltage à une certaine fréquence sur le ports sélectionné '''
+    """
+      Fonction qui permet de faire une lecture de voltage à une certaine fréquence sur le ports sélectionné.
 
-    task = nidaqmx.Task() # Coucou, wake-up
+       :param port: port ao0 ou ao1 en string (voir paramètre pour plus d'information)
+       :return : valeur de voltage en float
+
+    """
+
+    task = nidaqmx.Task()
     task.ai_channels.add_ai_voltage_chan(
         physical_channel=port, min_val=0.0, max_val=2.0, units=VoltageUnits.VOLTS)  # initialise port
     task.timing.cfg_samp_clk_timing(sample_mode=AcquisitionType.FINITE)  # Spécification lecture MydaQ
@@ -55,7 +74,14 @@ def mesure_v(port):
 
 
 def mesure_resistance(r1, vs, channel_list):
-    '''Fonction qui permet de retourner la valeur de résistance d'une thermistance'''
+    """
+    Fonction qui permet de retourner la valeur de résistance d'une thermistance.
+
+    :param port: port ao0 ou ao1 en string (voir paramètre pour plus d'information)
+    :
+    :return : valeur de résistance des thermistances 1 et 2 en float
+
+    """
     v0, v1 = mesure_v(channel_list[0]), mesure_v(channel_list[1])
     rt0 = r1*(1/((vs/v0)-1.0))
     rt1 = r1*(1/((vs/v1)-1.0))
