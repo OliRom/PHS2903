@@ -9,11 +9,11 @@ chiffre=[f'{j}' for j in range(10)]
 
 while True:
     T=input('Q: quitter D: supprimer R: relecture. float: Température RTD.  ')
-    if T=='Q':
+    if T=='Q' or T=='q':
         break
-    elif T=='D':
+    elif T=='D' or T=='d':
         courbe.pop(-1)
-    elif T=='R':
+    elif T=='R' or T=='r':
         print(courbe[-3:])
     else:
         try:
@@ -21,8 +21,7 @@ while True:
         except:
             print('Mauvaise valeur')
         else:
-            #V=ut.mesure_v(para.daq_ports[f"thermi_{i}"])
-            V=np.random.random()
+            V=ut.mesure_v(para.daq_ports[f"thermi_{i}"])
             courbe.append((V,T))
 
 df = pd.DataFrame(courbe, columns=["V","T"])
