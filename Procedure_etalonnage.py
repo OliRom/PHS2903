@@ -5,7 +5,6 @@ import Parameters as param
 
 i= int(input('Numero de la thermistance (1 ou 2): '))
 courbe = []
-chiffre=[f'{j}' for j in range(10)]
 
 while True:
     T=input('Q: quitter D: supprimer R: relecture. float: Température RTD.  ')
