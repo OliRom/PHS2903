@@ -8,18 +8,22 @@ courbe = []
 chiffre=[f'{j}' for j in range(10)]
 
 while True:
-    while True:
-        T=input('Temperature affichage RTD: ')
-        if T=='':
-            print('Mauvaise valeur, recommencer')
-        elif T[0] not in chiffre or T[-1] not in chiffre:
-            print('Mauvaise valeur, recommencer')
-        else:
-            break
-    V=ut.mesure_v(para.daq_ports[f"thermi_{i}"])
-    courbe.append((V,T))
-    if str(input('Q pour quitter, enter pour continuer: '))=='Q':
+    T=input('Q: quitter D: supprimer R: relecture. float: Température RTD.  ')
+    if T=='Q':
         break
+    elif T=='D':
+        courbe.pop(-1)
+    elif T=='R':
+        print(courbe[-3:])
+    else:
+        try:
+            float(T)
+        except:
+            print('Mauvaise valeur')
+        else:
+            #V=ut.mesure_v(para.daq_ports[f"thermi_{i}"])
+            V=np.random.random()
+            courbe.append((V,T))
 
 df = pd.DataFrame(courbe, columns=["V","T"])
 print(df)
