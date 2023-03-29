@@ -78,7 +78,6 @@ def mesure_resistance(r1, vs, channel_list):
     Fonction qui permet de retourner la valeur de résistance d'une thermistance.
 
     :param port: port ao0 ou ao1 en string (voir paramètre pour plus d'information)
-    :
     :return : valeur de résistance des thermistances 1 et 2 en float
 
     """
