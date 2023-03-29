@@ -1,9 +1,26 @@
-#define kp 1  // proportional constant
-#define ki 1  // integral constant
-#define kd 1  // derivative constant
+// Valeur des constantes du PID à 25C (min) et 40C (max)
+// proportional constant
+#define kp_min 20
+#define kp_max 40
+// integral constant
+#define ki_min 1
+#define ki_max 1.5
+// derivative constant
+#define kd_min 15
+#define kd_max 15
+// temperature constant
+#define kt_min 25
+#define kt_max 25
 
 #define thermo_pin 10
 #define power_pin 9
+
+// Coefficients de la thermistance
+#define e 15
+#define r 115000
+#define a 0.00113
+#define b 0.000235
+#define c 8.57e-8
 
 #define nb_error 10  // Nombre de valeurs d'erreur à garder pour calculer le PID
 int t;
@@ -18,23 +35,30 @@ void rotate(float *arr, float new_element=0) {
   arr[0] = new_element;
 }
 
-float compute_power(float *error) {
+float kp(float T){return kp_min + (kp_max-kp_min)/15 * (T-25);}
+float ki(float T){return ki_min + (ki_max-ki_min)/15 * (T-25);}
+float kd(float T){return kd_min + (kd_max-kd_min)/15 * (T-25);}
+float kt(float T){return kt_min + (kt_max-kt_min)/15 * (T-25);}
+
+float compute_power(float T, float *error) {
   float integral = 0;
   for (int i=0; i<nb_error; i++){integral += error[i];}
   
-  return kp*error[0] + ki*integral + kd * (error[0]-error[1]);
+  return kp(T) * error[0] + ki(T) * integral + kd(T) * (error[0]-error[1]) + constrain((T-30)/10 * kt(T), 0, 100);
 }
 
 float v_to_temp(float v) {
-  return 0;
+  float arg = r * v / (e-v);
+  float denom = a + b * log(arg) + c * pow(log(arg), 3);
+  return 1 / denom;
 }
 
 void set_power(float power) {
-  if (power<0) {power=0;}
-  else if (power<255) {power=255;}
+  power = constrain(power, 0, 255);
   
   analogWrite(power_pin, power);
-  Serial.println(power);
+  // Serial.print("Pow:");
+  // Serial.println(power);
 }
 
 void setup() {
@@ -45,46 +69,24 @@ void setup() {
   delay(5000);
   while (Serial.available() == 0) {}
   cible = Serial.readString().toFloat();
-  Serial.println("Pret a commencer!");
+  // Serial.println("Pret a commencer!");
 }
 
-//void loop() {
-//  digitalWrite(10, HIGH);
-//  while (Serial.available() == 0){
-//    delay(100);
-//  }
-//  
-//  digitalWrite(10, LOW);
-//  t = Serial.readString().toInt();
-//
-//  digitalWrite(9, HIGH);
-//  if (t > 4){
-//    digitalWrite(9, HIGH);
-//    Serial.print(t);
-//  }
-//  else {
-//    digitalWrite(9, LOW);
-//    Serial.print(t);
-//  }
-//  delay(100);
-//}
-
 void loop() {
-  temp_v = analogRead(thermo_pin);
-  temp = v_to_temp(temp_v);
+  temp_v = float(analogRead(thermo_pin)) / 1024 * 5;
+  temp = v_to_temp(temp_v) - 273.15;
   rotate(error, cible-temp);
 
-  power = compute_power(error);
+  power = compute_power(temp, error);
   set_power(power);
-
-  delay(1000);
   
-//  for (int i=0; i<nb_error; i++) {
-//    Serial.print(error[i]);
-//    Serial.print(' ');
-//  }
-//  Serial.println();
-//  delay(1000);
+//  Serial.print("V:");
+//  Serial.print(temp_v);
+//  Serial.print("  Temp:");
+//  Serial.print(temp);
+//  Serial.print("  ");
+
+  delay(500);
 
   if (Serial.available()) {cible = Serial.readString().toFloat();}
 }
