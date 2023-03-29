@@ -27,6 +27,7 @@ daq_ports = {
     "thermi_1": "mydaq1/ai0",
     "thermi_2": "myDAQ1/ai1",
     "power": 3,
+    "thermi_ext": "mydaq1/ai0",
 }
 
 coef_init_guess = [
