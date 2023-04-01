@@ -65,7 +65,7 @@ def mesure_v(port):
     task = nidaqmx.Task()
     task.ai_channels.add_ai_voltage_chan(
         physical_channel=port, min_val=0.0, max_val=2.0, units=VoltageUnits.VOLTS)  # initialise port
-    task.timing.cfg_samp_clk_timing(sample_mode=AcquisitionType.FINITE)  # Spécification lecture MydaQ
+    task.timing.cfg_samp_clk_timing(sample_mode=AcquisitionType.CONTINUOUS, rate=100)  # Spécification lecture MydaQ
     task.start()  # Commence à m'écouter
     v = task.read(number_of_samples_per_channel = 1)[0] # lit le port
     task.stop()#Ne m'écoute plus
@@ -78,7 +78,6 @@ def mesure_resistance(r1, vs, channel_list):
     Fonction qui permet de retourner la valeur de résistance d'une thermistance.
 
     :param port: port ao0 ou ao1 en string (voir paramètre pour plus d'information)
-    :
     :return : valeur de résistance des thermistances 1 et 2 en float
 
     """
