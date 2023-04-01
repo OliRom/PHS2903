@@ -39,17 +39,15 @@ if __name__ == "__main__":
     #     send_message(arduino, str(random.randint(0, 10)))
     #     time.sleep(1)
 
-    with ni.Task() as task:
-        task.ai_channels.add_ai_voltage_chan("mydaq1/ai0")
-        a = task.read()
-        print(a)
 
     task = ni.Task()
-    # task.ao_channels.add_ao_voltage_chan(task.out_stream)
-    # task.close()
+    task.ao_channels.add_ao_voltage_chan(physical_channel="myDAQ1/ao0",min_val = 0.0, max_val = 10.0)
 
-    a = stream_writers.CounterWriter("mudaq1/ao0")
-    a.write_one_sample_pulse_frequency(10, 0.2)
+    a = stream_writers.CounterWriter()
+    a.write_many_sample_pulse_frequency(100, 0.9)
+
     task.close()
 
     time.sleep(20)
+
+    
