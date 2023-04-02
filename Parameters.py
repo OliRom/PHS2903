@@ -24,9 +24,9 @@ meas_file_paths = {
 }
 
 daq_ports = {
-    "thermi_1": "mydaq1/ai0",
+    "thermi_1": "myDAQ1/ai0",
     "thermi_2": "myDAQ1/ai1",
-    "power": 3,
+    "power": "myDAQ1/ao1",
     "thermi_ext": "mydaq1/ai0",
 }
 

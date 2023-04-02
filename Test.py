@@ -2,8 +2,23 @@ import time
 import serial
 import serial.tools.list_ports as list_ports
 import random
+
 import nidaqmx as ni
-from nidaqmx import stream_writers
+from nidaqmx.stream_writers import CounterWriter
+from nidaqmx.constants import AcquisitionType
+
+def pwm_output(freq, duty_cycle, sample_freq, physical_channel):
+    task = ni.Task()
+    task.ao_channels.add_ao_voltage_chan(physical_channel=physical_channel,
+                                         min_val=0.0, max_val=10.0)
+    task.timing.cfg_samp_clk_timing(rate=sample_freq, 
+                                    sample_mode=AcquisitionType.CONTINUOUS)
+    writer = CounterWriter
+    writer.write_one_sample_pulse_frequency(frequency=freq, duty_cycle=duty_cycle, auto_start=True)
+    return task  
+# La fonction retourne la tache, donc on peut appeler task.stop() et task.close() 
+# à l'extérieur de la fonction
+
 
 
 def get_arduino_port():
@@ -39,15 +54,7 @@ if __name__ == "__main__":
     #     send_message(arduino, str(random.randint(0, 10)))
     #     time.sleep(1)
 
+    
 
-    task = ni.Task()
-    task.ao_channels.add_ao_voltage_chan(physical_channel="myDAQ1/ao0",min_val = 0.0, max_val = 10.0)
-
-    a = stream_writers.CounterWriter()
-    a.write_many_sample_pulse_frequency(100, 0.9)
-
-    task.close()
-
-    time.sleep(20)
 
     
