@@ -23,6 +23,5 @@ def find_coef(therm, plot_regression=False):
         plt.legend()
         plt.show()
 
-2 weeks ago2 weeks ago2 weeks ago
 if __name__ == "__main__":
     find_coef("thermi_1", True)
