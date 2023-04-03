@@ -7,6 +7,8 @@ import nidaqmx as ni
 from nidaqmx.stream_writers import CounterWriter
 from nidaqmx.constants import AcquisitionType
 
+
+
 def pwm_output(freq, duty_cycle, sample_freq, physical_channel):
     task = ni.Task()
     task.ao_channels.add_ao_voltage_chan(physical_channel=physical_channel,

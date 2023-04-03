@@ -7,6 +7,8 @@ import nidaqmx
 from nidaqmx.stream_readers import AnalogSingleChannelReader, AnalogMultiChannelReader
 from nidaqmx.constants import (ResolutionType, VoltageUnits, BridgeUnits, AcquisitionType)
 import Parameters as para
+import nidaqmx as ni
+from nidaqmx.stream_writers import CounterWriter
 
 
 def get_arduino_port():
@@ -99,13 +101,20 @@ class PowerControler:
         self.port = port  # Port de l'élément chauffant
         self.power = p
 
-    def set_power(self, p):
+    def set_power(self, p,freq, duty_cycle, sample_freq, physical_channel):
         self.power = p
         voltage = self.p_to_voltage(p)
         with nidaqmx.Task() as task:
             task.ao_channels.add_ao_voltage_chan(self.port, min_val=0, max_val=10.0)  # Ajouter le canal analogique
             task.write(voltage)  # Écrire une tension sur le port
-
+        task = ni.Task()
+        task.ao_channels.add_ao_voltage_chan(physical_channel=physical_channel,
+                                            min_val=0.0, max_val=10.0)
+        task.timing.cfg_samp_clk_timing(rate=sample_freq, 
+                                        sample_mode=AcquisitionType.CONTINUOUS)
+        writer = CounterWriter
+        writer.write_one_sample_pulse_frequency(frequency=freq, duty_cycle=duty_cycle, auto_start=True)
+        
     @staticmethod
     def p_to_voltage(p):
         v = 0
