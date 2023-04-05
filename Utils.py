@@ -9,6 +9,7 @@ from nidaqmx.constants import (ResolutionType, VoltageUnits, BridgeUnits, Acquis
 import Parameters as para
 import nidaqmx as ni
 from nidaqmx.stream_writers import CounterWriter
+import multiprocessing as mp
 
 
 def get_arduino_port():
@@ -95,30 +96,40 @@ def mesure_temperature(a,b,c, channel_list, freq):
     T1 = 1/(a+(b*mt.log(RT1)) + (c*(mt.log(RT1))**3))
     print(f'Hot : {T0} °K,   Cold : {T1} °K')
 
+def pwm(duty_cycle, freq, port):
+    T = 1e9/freq
+    task = ni.Task()
+    task.ao_channels.add_ao_voltage_chan(port, min_val=0, max_val=10.0)  # Ajouter le canal analogique
+    start = time.time_ns()
+    while True:
+        while (((time.time_ns() -start) % T)/T) > duty_cycle:
+            pass
+        task.write(2.5)  # Écrire une tension sur le port
+        while (((time.time_ns() -start) % T)/T) < duty_cycle:
+            pass
+        task.write(0.0)
 
 class PowerControler:
     def __init__(self, port, p=0):
         self.port = port  # Port de l'élément chauffant
         self.power = p
+        self.task = None
+        self.args = {"port" : port, "duty_cycle" : None, "freq" : None}
 
     def set_power(self, p,freq, duty_cycle, sample_freq, physical_channel):
-        self.power = p
-        voltage = self.p_to_voltage(p)
-        with nidaqmx.Task() as task:
-            task.ao_channels.add_ao_voltage_chan(self.port, min_val=0, max_val=10.0)  # Ajouter le canal analogique
-            task.write(voltage)  # Écrire une tension sur le port
-        task = ni.Task()
-        task.ao_channels.add_ao_voltage_chan(physical_channel=physical_channel,
-                                            min_val=0.0, max_val=10.0)
-        task.timing.cfg_samp_clk_timing(rate=sample_freq, 
-                                        sample_mode=AcquisitionType.CONTINUOUS)
-        writer = CounterWriter
-        writer.write_one_sample_pulse_frequency(frequency=freq, duty_cycle=duty_cycle, auto_start=True)
+        self.args = {"duty_cycle" : None, "freq" : None, "port" :"myDAQ1/ao0"}
+        pwm_task = mp.Process(target = pwm, kwargs = args)
+        pwm_task.start()
+        
+        pwm_task.kill()
+        
         
     @staticmethod
     def p_to_voltage(p):
         v = 0
         return v
+    
+    
 
 
 if __name__ == "__main__":
