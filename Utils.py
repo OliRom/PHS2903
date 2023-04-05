@@ -43,7 +43,7 @@ def v_to_temp(v, a, b, c, e, r):
     return 1 / denom
 
 
-def set_voltage(port,voltage):
+def set_voltage(port, voltage):
     """
     Fonction qui définit le voltage en sortie des analogue out du myDaq.
 
@@ -54,6 +54,7 @@ def set_voltage(port,voltage):
     task = nidaqmx.Task()
     task.ao_channels.add_ao_voltage_chan(port,min_val=0,max_val=10.0) # Ajouter le canal analogique
     task.write(voltage)  # Écrire une tension sur le port
+    task.close()
 
 
 def mesure_v(port):
@@ -96,6 +97,7 @@ def mesure_temperature(a,b,c, channel_list, freq):
     T1 = 1/(a+(b*mt.log(RT1)) + (c*(mt.log(RT1))**3))
     print(f'Hot : {T0} °K,   Cold : {T1} °K')
 
+
 def pwm(duty_cycle, freq, port):
     T = 1e9/freq
     task = ni.Task()
@@ -104,35 +106,57 @@ def pwm(duty_cycle, freq, port):
     while True:
         while (((time.time_ns() -start) % T)/T) > duty_cycle:
             pass
-        task.write(2.5)  # Écrire une tension sur le port
+        task.write(5)  # Écrire une tension sur le port
         while (((time.time_ns() -start) % T)/T) < duty_cycle:
             pass
-        task.write(0.0)
+        task.write(0)
+
 
 class PowerControler:
-    def __init__(self, port, p=0):
+    def __init__(self, port, max_p, freq=None, p=None):
         self.port = port  # Port de l'élément chauffant
         self.power = p
+        self.max_p = max_p
         self.task = None
-        self.args = {"port" : port, "duty_cycle" : None, "freq" : None}
+        self.args = {"port": port, "duty_cycle": None, "freq": freq}
+        self.running_args = dict()
 
-    def set_power(self, p,freq, duty_cycle, sample_freq, physical_channel):
-        self.args = {"duty_cycle" : None, "freq" : None, "port" :"myDAQ1/ao0"}
-        pwm_task = mp.Process(target = pwm, kwargs = args)
-        pwm_task.start()
-        
-        pwm_task.kill()
-        
-        
-    @staticmethod
-    def p_to_voltage(p):
-        v = 0
-        return v
-    
-    
+    def start_pwm(self):
+        if self.args != self.running_args:
+            if self.task is not None: self.stop_pwm()
+            self.running_args = self.args.copy()
+            self.task = mp.Process(target=pwm, kwargs=self.running_args)
+            self.task.start()
+
+    def set_arg(self, **kwargs):
+        self.args.update(kwargs)
+
+    def stop_pwm(self):
+        self.task.kill()
+        self.task = None
+        set_voltage(self.port, 0)
+
+    def set_power(self, p):
+        self.power = min(p, self.max_p)
+        self.args["duty_cycle"] = self.p_to_duty_cycle(self.power)
+
+    def p_to_duty_cycle(self, p):
+        return p / self.max_p
 
 
 if __name__ == "__main__":
-    port = get_arduino_port()
-    arduino = serial.Serial(port, baudrate=9600, timeout=0.2)
-    arduino.close()
+    a = PowerControler("myDAQ1/ao0", 30, freq=5)
+    a.set_power(30)
+    a.start_pwm()
+    print(a.args)
+    time.sleep(10)
+
+    a.set_power(15)
+    a.start_pwm()
+    print(a.args)
+    time.sleep(10)
+
+    a.stop_pwm()
+    # port = get_arduino_port()
+    # arduino = serial.Serial(port, baudrate=9600, timeout=0.2)
+    # arduino.close()
