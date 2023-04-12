@@ -12,8 +12,16 @@ from nidaqmx.stream_writers import CounterWriter
 import multiprocessing as mp
 
 
-def get_arduino_port():
+def get_arduino_port(verbose=False):
     ports = list_ports.comports()
+    if verbose:
+        for p in ports:
+            print(p.device) #print(p[0])
+            #print(p.description) #print(p[1])
+            #print(p[2])
+            print(p.device_path)
+        print(len(ports), 'ports found')
+
     ports = [(port, desc) for port, desc, _ in sorted(ports) if "Arduino" in desc]
 
     assert len(ports) != 0, "Aucun port n'a été reconnu comme étant connecté à un Arduino"

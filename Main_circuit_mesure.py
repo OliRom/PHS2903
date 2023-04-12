@@ -16,11 +16,11 @@ def measure_ga():
     data = list()  # Initialisation de la liste contenant les données
 
     # Initialisation du contrôleur de puissance
-    power_controler = ut.PowerControler(para.daq_ports["power"])
+    power_controler = ut.PowerControler(para.daq_ports["power"],30)
     power_controler.set_power(15)
 
     # Initialisation de la communication sérielle avec le Arduino
-    arduino = serial.Serial(ut.get_arduino_port(), baudrate=9600, timeout=0.2)
+    arduino = serial.Serial(ut.get_arduino_port(True), baudrate=9600, timeout=0.2)
 
     # Charger les coefficients des thermistances
     coef = dict()
