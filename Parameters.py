@@ -41,3 +41,9 @@ coef_init_guess = [
 T_max = 40  # Température maximale
 m_Ga = 50  # Masse du gallium
 c_recipient = 10  # Capacité thermique du récipient [J/(g K)]
+p_max = 30 #Watt max élément chauffant du Ga
+p_min = 1 #Watt min élément chauffant Ga (courant de fuite)
+R= 20 #Ohm résistance élément chauffant
+#a_R=  #Incertitude résistance
+#a_V= incertitude voltage élément chauffant
+#
