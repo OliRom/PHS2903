@@ -16,9 +16,15 @@ def compute_c(data, m, c_r):
     t, T, p = data["t"].to_numpy(), data["T"].to_numpy(), data["p"].to_numpy()
     dT_dt = np.diff(T) / np.diff(t)
     c = (p[:-1]/dT_dt - c_r) / m
-    T_shifted = (T[:-1] + T[1:]) / 2  # Ajustement de la taille de T, car np.diff() réduit la taille de la matrice par 1
+    
+    p_shifted = p[1:-1]  # Ajustement de la taille de p, car np.diff(2) réduit la taille de la matrice par 2
+    dT_dt_shifted = (dT_dt[:-1] + dT_dt[1:]) / 2  # Ajustement de la taille de dT-dt, car np.diff() réduit la taille de la matrice par 1
+    T_shifted = T[1:-1]  # Ajustement de la taille de T, car np.diff(2) réduit la taille de la matrice par 2
+    c_shifted = c[1:-1]  # Ajustement de la taille de c, car np.diff(2) réduit la taille de la matrice par 2
 
-    return np.c_[T_shifted, c]
+    alpha_c=c*((para.a_p(p_shifted)/p_shifted)**2+(para.a_T(T_shifted)*np.diff(T,2)/(dT_dt_shifted)**2)*2+(para.a_m/m)**2)**0.5
+
+    return np.c_[T_shifted, c_shifted, alpha_c]
 
 
 def compute_t_h_fusion(data, m):

@@ -1,4 +1,12 @@
+def test(fun, *args, **kwargs):
+    return fun(*args, **kwargs)
 
+def test2(a, b, c=3, **x):
+    print(a)
+    print(b)
+    print(c)
+
+test(test2, **{'a':1,'c':2,'b':5, 'd':6})
 
 
 

@@ -1,5 +1,5 @@
 import os
-
+import numpy as np
 
 data_path = os.path.join("data")
 
@@ -38,12 +38,46 @@ coef_init_guess = [
     115e3,  # r
 ]
 
+
+#coef étalonné thermi 2:
+A_2=1.71097855e-03
+B_2=7.33832636e-05  
+C_2=4.73429921e-07  
+E_2=1.33374599e+03  
+R_2=1.48383888e+08  
+
 T_max = 40  # Température maximale
 m_Ga = 50  # Masse du gallium
 c_recipient = 10  # Capacité thermique du récipient [J/(g K)]
 p_max = 30 #Watt max élément chauffant du Ga
 p_min = 1 #Watt min élément chauffant Ga (courant de fuite)
 R= 20 #Ohm résistance élément chauffant
-#a_R=  #Incertitude résistance
-#a_V= incertitude voltage élément chauffant
-#
+a_R=0.001*R+0.001/R  #Incertitude résistance élément chauffant appareil Yves
+v_max=18  #V quand p_max
+a_Vmx=0.0001*v_max+0.003 #incertitude voltage max élément chauffant (résolution Gwinstek GPS-1850 D)
+a_PWM=12**(-0.5)/16e6 #incertitude sur la période du PWM, fréquence du processeur: 16MHz.
+Q=0.0452 #voir présentation orale. Pertes de chaleur.
+def a_p(P): #incertitude sur P en fonction de P
+    return ((2*P*a_Vmx/v_max)**2+25*(P**2+(v_max**2/R)**2)*a_PWM+(P*a_R/R)**2+Q**2)**0.5
+#a_T_th1= #écart type de la courbe d'étalonnage de thermi 1
+#dT_dV_th1= #dérivée de la courbe d'étalonnage de thermi 1
+a_T_th2=0.04942304589048282 #écart type de la courbe d'étalonnage de thermi 2
+def dT_dV_th2(T): #dérivée de la courbe d'étalonnage de thermi 2 (steinhart-hart inverse)
+    x=(A_2-1/T)/C_2
+    y=((B_2/(3*C_2))**3+x**2/4)**0.5
+    arg=np.exp((y-x/2)**(1/3)-(y+x/2)**(1/3))
+    
+    dV_darg=E_2*R_2/(R_2+arg)**2
+
+    darg_dx=-arg*((y-x/2)**(-2/3)+(y+x/2)**(-2/3))/6
+    darg_dy=arg*((y-x/2)**(-2/3)-(y+x/2)**(-2/3))/3
+    dy_dx=x/(4*y)
+    dx_dT=1/(C_2*T**2)
+    darg_dT=(darg_dx+darg_dy*dy_dx)*dx_dT
+
+    dV_dT=dV_darg*darg_dT
+    return 1/dV_dT
+def a_T(T): #incertitude sur la T de thermi 2
+    return (a_T_th2**2+3.0976e-12*dT_dV_th2(T)**2+0.01)**0.5 
+
+a_m=0 #incertitude sur la masse
