@@ -5,7 +5,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import Parameters as para
 
-colonnes = ["thermi_ext","thermi_1"]
+colonnes = ["thermi_2","thermi_1"]
 data1 = pd.read_csv(para.etal_data_file_paths[colonnes[0]])
 data2 = pd.read_csv(para.etal_data_file_paths[colonnes[1]])
 

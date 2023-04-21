@@ -42,5 +42,5 @@ def stdev(therm):
     return(stdev)  
 
 if __name__ == "__main__":
-    find_coef("thermi_ext", True)
+    find_coef("thermi_1", True)
     #stdev('thermi_2')
