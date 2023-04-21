@@ -2,8 +2,10 @@ import time
 import serial
 import serial.tools.list_ports as list_ports
 import random
-
+import matplotlib.pyplot as plt
+import pandas as pd
 import nidaqmx as ni
+import Parameters as para
 from nidaqmx import stream_readers
 import nidaqmx.stream_writers as ns
 from nidaqmx.constants import AcquisitionType, Edge
@@ -74,20 +76,25 @@ def send_message(connection, message):
 
 
 if __name__ == "__main__":
+    """
     # port = get_arduino_port()
     # arduino = serial.Serial(port, baudrate=9600, timeout=0.2)
     #
     # while True:
     #     send_message(arduino, str(random.randint(0, 10)))
     #     time.sleep(1)
-    args = {"duty_cycle" : 0.8, "freq" :100, "port" :"myDAQ1/ao0"}
-    pwm_task = mp.Process(target = pwm, kwargs = args)
+    args = {"duty_cycle": 0.8, "freq": 100, "port": "myDAQ1/ao0"}
+    pwm_task = mp.Process(target=pwm, kwargs=args)
     pwm_task.start()
     print(1)
     time.sleep(10.0)
     pwm_task.kill()
     print(2)
     args["duty_cycle"]
+    """
 
-
-    
+    data = pd.read_csv(para.meas_file_paths["data"])
+    x = range(len(data))
+    plt.plot(x, data["T1"])
+    plt.plot(x, data["T2"])
+    plt.show()

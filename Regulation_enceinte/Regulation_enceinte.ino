@@ -57,8 +57,8 @@ void set_power(float power) {
   power = constrain(power, 0, 255);
   
   analogWrite(power_pin, power);
-  // Serial.print("Pow:");
-  // Serial.println(power);
+//  Serial.print("Pow:");
+//  Serial.println(power);
 }
 
 void setup() {
@@ -67,9 +67,10 @@ void setup() {
   
   Serial.begin(9600);
   delay(5000);
+  set_power(0);
   while (Serial.available() == 0) {}
   cible = Serial.readString().toFloat();
-  // Serial.println("Pret a commencer!");
+//  Serial.println("Pret a commencer!");
 }
 
 void loop() {

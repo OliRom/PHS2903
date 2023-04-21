@@ -1,5 +1,6 @@
-import numpy as np ; import math as mt
-import time ;
+import numpy as np
+import math as mt
+import time
 import nidaqmx
 from nidaqmx.stream_readers import AnalogSingleChannelReader, AnalogMultiChannelReader
 from nidaqmx.constants import (ResolutionType, VoltageUnits, 
@@ -54,5 +55,6 @@ def GET_T(a,b,c, channel_list, freq):
     T1 = 1/(a+(b*mt.log(RT1)) + (c*(mt.log(RT1))**3))
     print(f'Hot : {T0} °K,   Cold : {T1} °K')
 
-# Test
-GET_T(*para.coef_init_guess[:3], ["myDAQ1/ai0", "myDAQ1/ai1"], 10.0)
+
+if __name__ == "__main__":
+    GET_T(*para.coef_init_guess[:3], ["myDAQ1/ai0", "myDAQ1/ai1"], 10.0)

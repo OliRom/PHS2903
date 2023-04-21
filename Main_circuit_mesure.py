@@ -27,7 +27,12 @@ def measure_ga():
     for i in [1, 2]:
         coef[f"thermi_{i}"] = np.load(para.coef_file_paths[f"thermi_{i}"])["coef"]
 
-    while T <= para.T_max:
+    power_controler.set_power(10)
+    power_controler.start_pwm()
+    print("Temps - T1 - T2 - Tmoyen - Puissance")
+    counter = 0
+
+    while T <= para.T_max + para.T_0 + 5:
         v1, v2 = ut.mesure_v(para.daq_ports["thermi_1"]), ut.mesure_v(para.daq_ports["thermi_2"])
         T1, T2 = ut.v_to_temp(v1, *coef["thermi_1"]), ut.v_to_temp(v2, *coef["thermi_2"])
         temps = time.time_ns() - start
@@ -35,12 +40,20 @@ def measure_ga():
         T = (T1 + T2) / 2
         p = power_controler.power
 
-        data.append((temps, T1, T2, T, p))
+        data.append((temps/1e9, T1, T2, T, p))
 
         # Envoyer la température moyenne au Arduino
-        arduino.write(bytes(T, "utf-8"))
+        if counter % 5 == 1:
+            arduino.write(bytes(str(T2-para.T_0), "utf-8"))
+
+        print("\r", end="")
+        #print(data[-1]-np.array([0, para.T_0, para.T_0, para.T_0, 0]), end="")
+        print(f"{round(T1-para.T_0, 2)} - {round(T2-para.T_0, 2)}", end="")
+        counter += 1
 
         time.sleep(0.1)
+
+    power_controler.stop_pwm()
 
     # Enregistrement des données
     df = pd.DataFrame(data, columns=["t", "T1", "T2", "T", "p"])
