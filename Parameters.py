@@ -46,8 +46,9 @@ m_Ga = 50  # Masse du gallium
 c_recipient = 10  # Capacité thermique du récipient [J/(g K)]
 p_max = 30 #Watt max élément chauffant du Ga
 p_min = 1 #Watt min élément chauffant Ga (courant de fuite)
-R= 17.8775 #Ohm résistance élément chauffant
-a_R=0.0194145512896589  #Incertitude résistance élément chauffant appareil Yves
+R= 18.0907 #Ohm résistance élément chauffant
+a_R=0.01846401149396240000
+  #Incertitude résistance élément chauffant appareil Yves
 v_max=18  #V quand p_max
 a_Vmx=0.0001*v_max+0.003 #incertitude voltage max élément chauffant (résolution Gwinstek GPS-1850 D)
 a_PWM=12**(-0.5)/16e6 #incertitude sur la période du PWM, fréquence du processeur: 16MHz.
