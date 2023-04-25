@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 
 data_path = os.path.join("data")
