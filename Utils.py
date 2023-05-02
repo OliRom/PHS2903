@@ -17,9 +17,9 @@ def get_arduino_port(verbose=False):
     if verbose:
         for p in ports:
             print(p.device) #print(p[0])
-            #print(p.description) #print(p[1])
+            print(p.description) #print(p[1])
             #print(p[2])
-            print(p.device_path)
+            #print(p.device_path)
         print(len(ports), 'ports found')
 
     ports = [(port, desc) for port, desc, _ in sorted(ports) if "Arduino" in desc]

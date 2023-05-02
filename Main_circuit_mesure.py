@@ -16,28 +16,29 @@ def measure_ga():
     data = list()  # Initialisation de la liste contenant les données
 
     # Initialisation du contrôleur de puissance
-    power_controler = ut.PowerControler(para.daq_ports["power"],30)
+    power_controler = ut.PowerControler(para.daq_ports["power"], para.p_max, freq=5)
     power_controler.set_power(15)
 
     # Initialisation de la communication sérielle avec le Arduino
-    arduino = serial.Serial(ut.get_arduino_port(True), baudrate=9600, timeout=0.2)
+    arduino = serial.Serial(ut.get_arduino_port(False), baudrate=9600, timeout=0.2)
 
     # Charger les coefficients des thermistances
     coef = dict()
     for i in [1, 2]:
         coef[f"thermi_{i}"] = np.load(para.coef_file_paths[f"thermi_{i}"])["coef"]
 
-    power_controler.set_power(10)
+    #power_controler.set_power(10)
     power_controler.start_pwm()
     print("Temps - T1 - T2 - Tmoyen - Puissance")
     counter = 0
 
     while T <= para.T_max + para.T_0 + 5:
         v1, v2 = ut.mesure_v(para.daq_ports["thermi_1"]), ut.mesure_v(para.daq_ports["thermi_2"])
-        T1, T2 = ut.v_to_temp(v1, *coef["thermi_1"]), ut.v_to_temp(v2, *coef["thermi_2"])
+        T1, T2 = ut.v_to_temp(v1, *coef["thermi_1"]), ut.v_to_temp(v2, *coef["thermi_2"])-74.5
         temps = time.time_ns() - start
 
         T = (T1 + T2) / 2
+        T = T1
         p = power_controler.power
 
         data.append((temps/1e9, T1, T2, T, p))
