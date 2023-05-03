@@ -27,7 +27,7 @@ meas_file_paths = {
 daq_ports = {
     "thermi_1": "myDAQ1/ai0",
     "thermi_2": "myDAQ1/ai1",
-    "power": "myDAQ1/ao1",
+    "power": "myDAQ1/ao0",
     "thermi_ext": "mydaq1/ai0",
 }
 
@@ -46,7 +46,7 @@ m_recipient = 38.0853  # Masse du récipient vide
 m_totale = 88  # Massedu récipient avec le Gallium
 m_Ga = m_totale - m_recipient  # Masse du gallium
 
-c_recipient = 10  # Capacité thermique du récipient [J/(g K)]
+c_recipient = 0  # Capacité thermique du récipient [J/(g K)]
 p_max = 30 #Watt max élément chauffant du Ga
 p_min = 1 #Watt min élément chauffant Ga (courant de fuite)
 R= 18.0907 #Ohm résistance élément chauffant
