@@ -17,7 +17,7 @@ def measure_ga():
 
     # Initialisation du contrôleur de puissance
     power_controler = ut.PowerControler(para.daq_ports["power"], para.p_max, freq=5)
-    power_controler.set_power(5)
+    power_controler.set_power(8)
 
     # Initialisation de la communication sérielle avec le Arduino
     arduino = serial.Serial(ut.get_arduino_port(False), baudrate=9600, timeout=0.2)

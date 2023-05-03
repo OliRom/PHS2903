@@ -42,8 +42,8 @@ coef_init_guess = [
 T_max = 40  # Température maximale
 T_0 = 273.15  # Température en Kelvin
 
-m_recipient = 38.0853  # Masse du récipient vide
-m_totale = 88  # Massedu récipient avec le Gallium
+m_recipient = 36.3755  # Masse du récipient vide
+m_totale = 83.6396  # Massedu récipient avec le Gallium
 m_Ga = m_totale - m_recipient  # Masse du gallium
 
 c_recipient = 0  # Capacité thermique du récipient [J/(g K)]
