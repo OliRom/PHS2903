@@ -58,10 +58,10 @@ def compute_t_h_fusion(data, m):
     plt.scatter(range(len(T)), T, s=1)
     plt.show()
 
-    # mini = int(input("Entrez la valeur du début du plateau: "))
-    # maxi = int(input("Entrez la valeur de la fin du plateau: "))
+    mini = int(input("Entrez la valeur du début du plateau: "))
+    maxi = int(input("Entrez la valeur de la fin du plateau: "))
 
-    mini, maxi = 60, 240
+    #mini, maxi = 60, 240
 
     # mini, maxi = np.argmin(courbure_dT_dE) + 2, np.argmax(courbure_dT_dE) + 2  # Extrémités du plateau de température
 
