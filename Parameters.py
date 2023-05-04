@@ -47,12 +47,12 @@ m_totale = 83.6396  # Massedu récipient avec le Gallium
 m_Ga = m_totale - m_recipient  # Masse du gallium
 a_m=0.0001/(6**0.5) #incertitude sur la masse
 
-c_etalon = 666 #capacité thermique du récipient + eau (étalonnage)
-m_eau = 7,1141 #masse d'eau en g
+c_etalon = 666 #capacité thermique du récipient + eau (étalonnage) (max+min)/2
+m_eau = 7.1141 #masse d'eau en g
 c_eau = (4.1818+4.1785)/2 #capacité thermique massique de l'eau [J/(g K)]
 a_c_eau = (4.1818-4.1785)/2 #inceritude sur c_eau. 4.1818 à 20C, 4.1785 à 40C
 c_recipient = c_etalon-c_eau*m_eau  # Capacité thermique massique du récipient [J/K]
-a_c_etalon = 0   #Incertitude sur la capacité thermique du récipient + eau (étalonnage)
+a_c_etalon = 0   #Incertitude sur la capacité thermique du récipient + eau (étalonnage) (max-min)/2
 
 a_c_recipient = (a_c_etalon**2+(m_eau*a_c_eau)**2+(c_eau*0.0001)**2/12)**0.5
 
