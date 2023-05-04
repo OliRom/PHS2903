@@ -30,12 +30,13 @@ def compute_c(data, m, c_r):
     T_shifted = T[1:-1]  # Ajustement de la taille de T, car np.diff(2) réduit la taille de la matrice par 2
     c_shifted = (c[:-1] + c[1:]) / 2  # Ajustement de la taille de c, car np.diff() réduit la taille de la matrice par 1
 
-    alpha_c = c_shifted * ((para.a_p(p_shifted) / p_shifted) ** 2 + (
-                para.a_T(T1_shifted, T2_shifted) * np.diff(T, 2) / (dT_dt_shifted) ** 2) * 2 + (
-                               para.a_m / m) ** 2) ** 0.5
     #alpha_c = c_shifted * ((para.a_p(p_shifted) / p_shifted) ** 2 + (
-            #para.a_T(T1_shifted, T2_shifted) * np.diff(T, 2) / (dT_dt_shifted) ** 2) * 2 + (
-                           #para.a_m / m) ** 2) ** 0.5
+                #para.a_T(T1_shifted, T2_shifted) * np.diff(T, 2) / (dT_dt_shifted) ** 2) * 2 + (
+                               #para.a_m / m) ** 2) ** 0.5
+    
+    alpha_c = ((para.a_p(p_shifted) / (dT_dt_shifted) ) ** 2 +
+                (para.a_T(T1_shifted, T2_shifted) * np.diff(T, 2) * p_shifted / (dT_dt_shifted) ** 3) ** 2
+                + para.a_c_recipient** 2 + (para.a_m * c_shifted) ** 2) ** 0.5 /m
 
     return np.c_[T_shifted, c_shifted, alpha_c]
 
