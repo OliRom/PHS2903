@@ -65,6 +65,7 @@ v_max=18  #V quand p_max
 a_Vmx=0.0001*v_max+0.003 #incertitude voltage max élément chauffant (résolution Gwinstek GPS-1850 D)
 a_PWM=12**(-0.5)/16e6 #incertitude sur la période du PWM, fréquence du processeur: 16MHz.
 Q=0.0452 #voir présentation orale. Pertes de chaleur.
+
 def a_p(P): #incertitude sur P en fonction de P
     return ((2*P*a_Vmx/v_max)**2+25*(P**2+(v_max**2/R)**2)*a_PWM+(P*a_R/R)**2+Q**2)**0.5
 
