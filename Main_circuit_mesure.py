@@ -40,13 +40,12 @@ def measure_ga():
         # temps = time.time_ns() - start
 
         T1 = T2 = - para.T_0
-        for i in range(10):
+        for i in range(20):
             v1, v2= ut.mesure_v(para.daq_ports["thermi_1"]), ut.mesure_v(para.daq_ports["thermi_2"])
             T1_temp, T2_temp = ut.v_to_temp(v1, *coef["thermi_1"]), ut.v_to_temp(v2, *coef["thermi_2"])
             if T1_temp > T1: T1 = T1_temp
             if T2_temp > T2: T2 = T2_temp
             temps = time.time_ns() - start
-            time.sleep(0.005)
 
         T = (T1 + T2) / 2
         T = T1
