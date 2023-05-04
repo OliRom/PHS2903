@@ -33,6 +33,9 @@ def compute_c(data, m, c_r):
     alpha_c = c_shifted * ((para.a_p(p_shifted) / p_shifted) ** 2 + (
                 para.a_T(T1_shifted, T2_shifted) * np.diff(T, 2) / (dT_dt_shifted) ** 2) * 2 + (
                                para.a_m / m) ** 2) ** 0.5
+    #alpha_c = c_shifted * ((para.a_p(p_shifted) / p_shifted) ** 2 + (
+            #para.a_T(T1_shifted, T2_shifted) * np.diff(T, 2) / (dT_dt_shifted) ** 2) * 2 + (
+                           #para.a_m / m) ** 2) ** 0.5
 
     return np.c_[T_shifted, c_shifted, alpha_c]
 
