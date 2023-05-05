@@ -119,7 +119,7 @@ def compute_all_results(data_path, saving_path, m, c_r, sep=",", show=False):
 
 if __name__ == "__main__":
     m, c_r = para.m_Ga, para.c_recipient
-    m, c_r = para.m_eau, 0
+    # m, c_r = para.m_eau, 0
     data_path, saving_path = para.meas_file_paths["data"], para.meas_file_paths["results"]
 
     with open(data_path, "r") as file:
