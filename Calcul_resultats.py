@@ -47,7 +47,7 @@ def compute_t_h_fusion(data, m):
     :return: tuple contenant la température de fusion et l'enthalpie de fusion
     """
 
-    t, T, p, T1, T2 = data["t"].to_numpy(), data["T1"].to_numpy(), data["T2"].to_numpy(), data["T"].to_numpy(), data["p"].to_numpy()
+    t, T1, T2, T, p = data["t"].to_numpy(), data["T1"].to_numpy(), data["T2"].to_numpy(), data["T"].to_numpy(), data["p"].to_numpy()
     E = np.cumsum(p[:-1] * np.diff(t))  # P = dE/dt => dE = P * dt => E = cumsum(dE)
 
     dT_dE = np.diff(T[:-1]) / np.diff(E)
