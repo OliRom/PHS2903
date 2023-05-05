@@ -17,7 +17,7 @@ def measure_ga():
 
     # Initialisation du contrôleur de puissance
     power_controler = ut.PowerControler(para.daq_ports["power"], para.p_max, freq=5)
-    power_controler.set_power(8)
+    power_controler.set_power(4)
 
     # Initialisation de la communication sérielle avec le Arduino
     arduino = serial.Serial(ut.get_arduino_port(False), baudrate=9600, timeout=0.2)
@@ -30,8 +30,6 @@ def measure_ga():
     power_controler.start_pwm()
     print("Temps - T1 - T2 - Tmoyen - Puissance")
     counter = 0
-
-    time.sleep(10)
 
     while T <= para.T_max + para.T_0 + 5:
         # time.sleep(0.1)

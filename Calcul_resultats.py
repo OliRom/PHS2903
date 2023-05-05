@@ -14,14 +14,15 @@ def compute_c(data, m, c_r):
     :return: matrice contenant la capacité thermique pour différentes températures
     """
 
-    t, T, p, T1, T2 = data["t"].to_numpy(), data["T1"].to_numpy(), data["T2"].to_numpy(), data["T"].to_numpy(), data["p"].to_numpy()
+    t, T1, T2, T, p = data["t"].to_numpy(), data["T1"].to_numpy(), data["T2"].to_numpy(), data["T"].to_numpy(), data["p"].to_numpy()
     dT_dt = np.diff(T) / np.diff(t)
+    c_r = 10
     c = (p[:-1] / dT_dt - c_r) / m
 
-    x = range(len(dT_dt))
-    plt.plot(x, dT_dt)
-    plt.plot(x, T[:-1])
-    plt.show()
+    # x = range(len(dT_dt))
+    # plt.plot(x, dT_dt)
+    # plt.plot(x, T[:-1])
+    # plt.show()
 
     p_shifted = p[1:-1]  # Ajustement de la taille de p, car np.diff(2) réduit la taille de la matrice par 2
     dT_dt_shifted = (dT_dt[:-1] + dT_dt[1:]) / 2  # Ajustement de la taille de dT-dt, car np.diff() réduit la taille de la matrice par 1
@@ -30,13 +31,12 @@ def compute_c(data, m, c_r):
     T_shifted = T[1:-1]  # Ajustement de la taille de T, car np.diff(2) réduit la taille de la matrice par 2
     c_shifted = (c[:-1] + c[1:]) / 2  # Ajustement de la taille de c, car np.diff() réduit la taille de la matrice par 1
 
+    alpha_c = c_shifted * ((para.a_p(p_shifted) / p_shifted) ** 2 + (
+                para.a_T(T1_shifted, T2_shifted) * np.diff(T, 2) / (dT_dt_shifted) ** 2) * 2 + (
+                               para.a_m / m) ** 2) ** 0.5
     #alpha_c = c_shifted * ((para.a_p(p_shifted) / p_shifted) ** 2 + (
-                #para.a_T(T1_shifted, T2_shifted) * np.diff(T, 2) / (dT_dt_shifted) ** 2) * 2 + (
-                               #para.a_m / m) ** 2) ** 0.5
-    
-    alpha_c = ((para.a_p(p_shifted) / (dT_dt_shifted) ) ** 2 +
-                (para.a_T(T1_shifted, T2_shifted) * np.diff(T, 2) * p_shifted / (dT_dt_shifted) ** 3) ** 2
-                + para.a_c_recipient** 2 + (para.a_m * c_shifted) ** 2) ** 0.5 /m
+            #para.a_T(T1_shifted, T2_shifted) * np.diff(T, 2) / (dT_dt_shifted) ** 2) * 2 + (
+                           #para.a_m / m) ** 2) ** 0.5
 
     return np.c_[T_shifted, c_shifted, alpha_c]
 
@@ -61,8 +61,9 @@ def compute_t_h_fusion(data, m):
 
     mini = int(input("Entrez la valeur du début du plateau: "))
     maxi = int(input("Entrez la valeur de la fin du plateau: "))
+    print()
 
-    #mini, maxi = 60, 240
+    # mini, maxi = 60, 240
 
     # mini, maxi = np.argmin(courbure_dT_dE) + 2, np.argmax(courbure_dT_dE) + 2  # Extrémités du plateau de température
 
@@ -98,24 +99,23 @@ def compute_all_results(data_path, saving_path, m, c_r, sep=",", show=False):
     conv_mask = np.array([1.0 for i in range(conv_size*2+1)])
     conv_mask /= conv_mask.sum()
 
-    print(data)
     data["T"] = np.convolve(data["T"], conv_mask, "same")
     data = data[conv_size:-conv_size]
-    print(data)
 
     c_selon_T = compute_c(data, m, c_r)
     T_fusion, h, a_h = compute_t_h_fusion(data, m)
 
     np.savez_compressed(saving_path, c_selon_T=c_selon_T, T_fusion=T_fusion, h_fusion=h, a_h_fusion=a_h)
 
-    print(T_fusion-para.T_0, h)
+    print("Température de fusion: ", T_fusion-para.T_0)
+    print("Enthalpie de fusion: ", h)
 
     if show:
         plt.plot(c_selon_T[:,0]-para.T_0, c_selon_T[:,1])
         plt.xlabel(r"Température $\left( ^o C \right)$")
         plt.ylabel(r"Capacité thermique massique $\left( \frac{J}{g \cdot K} \right)$")
         plt.title("Capacité thermique massique en fonction de la température")
-        plt.ylim(ymin=0, ymax=200)
+        plt.ylim(ymin=0, ymax=7)
         plt.show()
 
     return c_selon_T, T_fusion, h, a_h
@@ -123,6 +123,15 @@ def compute_all_results(data_path, saving_path, m, c_r, sep=",", show=False):
 
 if __name__ == "__main__":
     m, c_r = para.m_Ga, para.c_recipient
+    m, c_r = para.m_eau, 0
     data_path, saving_path = para.meas_file_paths["data"], para.meas_file_paths["results"]
 
-    results = compute_all_results(data_path, saving_path, m, c_r, sep=";", show=True)
+    with open(data_path, "r") as file:
+        if "," in file.readline():
+            sep = ","
+        elif ";" in file.readline():
+            sep = ";"
+        else:
+            print("Incapable de détecter le séparateur du fichier .csv.")
+
+    results = compute_all_results(data_path, saving_path, m, c_r, sep=sep, show=True)
