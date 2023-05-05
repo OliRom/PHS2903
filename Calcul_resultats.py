@@ -109,6 +109,7 @@ def compute_all_results(data_path, saving_path, m, c_r, sep=",", show=False):
 
     print("Température de fusion: ", T_fusion-para.T_0)
     print("Enthalpie de fusion: ", h)
+    print("Incertitude enthalpie de fusion: ", a_h)
 
     if show:
         plt.plot(c_selon_T[:,0]-para.T_0, c_selon_T[:,1])
@@ -117,6 +118,14 @@ def compute_all_results(data_path, saving_path, m, c_r, sep=",", show=False):
         plt.title("Capacité thermique massique en fonction de la température")
         plt.ylim(ymin=0, ymax=7)
         plt.show()
+
+    if show:
+    plt.plot(c_selon_T[:,0]-para.T_0, c_selon_T[:,2])
+    plt.xlabel(r"Température $\left( ^o C \right)$")
+    plt.ylabel(r"Incertitude capacité thermique massique $\left( \frac{J}{g \cdot K} \right)$")
+    plt.title("Incertitude capacité thermique massique en fonction de la température")
+    plt.ylim(ymin=0, ymax=7)
+    plt.show()
 
     return c_selon_T, T_fusion, h, a_h
 
