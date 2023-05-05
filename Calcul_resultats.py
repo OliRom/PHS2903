@@ -50,7 +50,7 @@ def compute_t_h_fusion(data, m):
     :return: tuple contenant la température de fusion et l'enthalpie de fusion
     """
 
-    t, T, p = data["t"].to_numpy(), data["T"].to_numpy(), data["p"].to_numpy()
+    t, T, p, T1, T2 = data["t"].to_numpy(), data["T1"].to_numpy(), data["T2"].to_numpy(), data["T"].to_numpy(), data["p"].to_numpy()
     E = np.cumsum(p[:-1] * np.diff(t))  # P = dE/dt => dE = P * dt => E = cumsum(dE)
 
     dT_dE = np.diff(T[:-1]) / np.diff(E)
@@ -71,7 +71,11 @@ def compute_t_h_fusion(data, m):
     T_fusion_arr = T[mini: maxi + 1]
     T_fusion = np.mean(T_fusion_arr)
 
-    return T_fusion, h_fusion
+    alpha_t_mini=para.a_T(T1[mini],T2[mini])*(t[mini]-t[mini-1])/(T[mini]-T[mini-1])
+    alpha_t_maxi=para.a_T(T1[maxi],T2[maxi])*(t[maxi]-t[maxi-1])/(T[maxi]-T[maxi-1])
+    alpha_h = ((para.a_p(p[0])*(maxi-mini))**2+(alpha_t_mini*p[mini])**2+(alpha_t_maxi*p[maxi])**2+(h_fusion*para.a_m)**2)**0.5/m
+
+    return T_fusion, h_fusion, alpha_h
 
 
 def compute_all_results(data_path, saving_path, m, c_r, sep=",", show=False):
@@ -100,9 +104,9 @@ def compute_all_results(data_path, saving_path, m, c_r, sep=",", show=False):
     print(data)
 
     c_selon_T = compute_c(data, m, c_r)
-    T_fusion, h = compute_t_h_fusion(data, m)
+    T_fusion, h, a_h = compute_t_h_fusion(data, m)
 
-    np.savez_compressed(saving_path, c_selon_T=c_selon_T, T_fusion=T_fusion, h_fusion=h)
+    np.savez_compressed(saving_path, c_selon_T=c_selon_T, T_fusion=T_fusion, h_fusion=h, a_h_fusion=a_h)
 
     print(T_fusion-para.T_0, h)
 
@@ -114,7 +118,7 @@ def compute_all_results(data_path, saving_path, m, c_r, sep=",", show=False):
         plt.ylim(ymin=0, ymax=200)
         plt.show()
 
-    return c_selon_T, T_fusion, h
+    return c_selon_T, T_fusion, h, a_h
 
 
 if __name__ == "__main__":
