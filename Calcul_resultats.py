@@ -31,12 +31,9 @@ def compute_c(data, m, c_r):
     T_shifted = T[1:-1]  # Ajustement de la taille de T, car np.diff(2) réduit la taille de la matrice par 2
     c_shifted = (c[:-1] + c[1:]) / 2  # Ajustement de la taille de c, car np.diff() réduit la taille de la matrice par 1
 
-    alpha_c = c_shifted * ((para.a_p(p_shifted) / p_shifted) ** 2 + (
-                para.a_T(T1_shifted, T2_shifted) * np.diff(T, 2) / (dT_dt_shifted) ** 2) * 2 + (
-                               para.a_m / m) ** 2) ** 0.5
-    #alpha_c = c_shifted * ((para.a_p(p_shifted) / p_shifted) ** 2 + (
-            #para.a_T(T1_shifted, T2_shifted) * np.diff(T, 2) / (dT_dt_shifted) ** 2) * 2 + (
-                           #para.a_m / m) ** 2) ** 0.5
+    alpha_c = ((para.a_p(p_shifted) / (dT_dt_shifted) ) ** 2 +
+         (para.a_T(T1_shifted, T1_shifted) * np.diff(T, 2) * p_shifted / (dT_dt_shifted) ** 3) ** 2 +
+         para.a_c_recipient** 2 + (para.a_m * c_shifted) ** 2) ** 0.5 /m
 
     return np.c_[T_shifted, c_shifted, alpha_c]
 
@@ -72,9 +69,9 @@ def compute_t_h_fusion(data, m):
     T_fusion_arr = T[mini: maxi + 1]
     T_fusion = np.mean(T_fusion_arr)
 
-    alpha_t_mini=para.a_T(T1[mini],T2[mini])*(t[mini]-t[mini-1])/(T[mini]-T[mini-1])
-    alpha_t_maxi=para.a_T(T1[maxi],T2[maxi])*(t[maxi]-t[maxi-1])/(T[maxi]-T[maxi-1])
-    alpha_h = ((para.a_p(p[0])*(maxi-mini))**2+(alpha_t_mini*p[mini])**2+(alpha_t_maxi*p[maxi])**2+(h_fusion*para.a_m)**2)**0.5/m
+    alpha_t_mini=para.a_T(T1[mini],T1[mini])*(t[mini]-t[mini-1])/(T[mini]-T[mini-1])
+    alpha_t_maxi=para.a_T(T1[maxi],T1[maxi])*(t[maxi]-t[maxi-1])/(T[maxi]-T[maxi-1])
+    alpha_h = ((para.a_p(p[0])*(t[maxi]-t[mini]))**2+(alpha_t_mini*p[mini])**2+(alpha_t_maxi*p[maxi])**2+(h_fusion*para.a_m)**2)**0.5/m
 
     return T_fusion, h_fusion, alpha_h
 
